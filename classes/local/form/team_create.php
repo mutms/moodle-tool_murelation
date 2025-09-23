@@ -73,10 +73,7 @@ final class team_create extends \tool_mulib\local\ajax_form {
         $mform->addElement('text', 'maxsubordinates', get_string('team_maxsubordinates', 'tool_murelation'), ['size' => 3]);
         $mform->setType('maxsubordinates', PARAM_INT);
 
-        $mform->addElement('advcheckbox', 'addsubordinates', get_string('members_create_a', 'tool_murelation', $subordinatestitle));
-
         team_create_subuserids::add_element($mform, $this->wsarguments, 'subuserids', $subordinatestitle, $context);
-        $mform->hideIf('subuserids', 'addsubordinates', 'notchecked');
 
         $mform->addElement('advcheckbox', 'teamcohortcreate', get_string('team_cohort_create', 'tool_murelation'));
 

@@ -21,6 +21,7 @@ namespace tool_murelation\external\form_autocomplete;
 use core_external\external_function_parameters;
 use core_external\external_value;
 use tool_murelation\local\uimode_teams;
+use tool_mulib\local\sql;
 
 /**
  * Provides list of subordinate candidates for existing team.
@@ -77,35 +78,36 @@ final class members_create_subuserids extends \tool_mulib\external\form_autocomp
             throw new \core\exception\invalid_parameter_exception('Cannot manage team members');
         }
 
-        $fields = \core_user\fields::for_name()->with_identity($context, false);
-        $extrafields = $fields->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
-
-        [$searchsql, $searchparams] = users_search_sql($query, 'usr', true, $extrafields);
-        [$sortsql, $sortparams] = users_order_by_sql('usr', $query, $context);
-        $params = array_merge($searchparams, $sortparams);
-
-        $tenantwhere = self::get_tenant_related_users_where('usr.id', $context);
-
-        $cohortjoin = "";
+        $sql = new sql(
+            "SELECT usr.*
+               FROM {user} usr
+               /* cohortjoin */
+          LEFT JOIN {tool_murelation_subordinate} sub ON sub.userid = usr.id AND sub.frameworkid = :fwid
+              WHERE sub.id IS NULL AND usr.deleted = 0 AND usr.confirmed = 1
+                    /* search */ /* tenant */
+            /* orderby */",
+            ['fwid' => $framework->id]
+        );
         if ($framework->subordinatecohortid) {
-            $cohortjoin = "JOIN {cohort_members} cm ON cm.userid = usr.id AND cm.cohortid = :scid";
-            $params['scid'] = $framework->subordinatecohortid;
+            $sql->replace_comment(
+                'cohortjoin',
+                new sql("JOIN {cohort_members} cm ON cm.userid = usr.id AND cm.cohortid = ?", [$framework->subordinatecohortid])
+            );
         }
-        $params['fwid'] = $framework->id;
+        $sql->replace_comment(
+            'search',
+            self::get_user_search_query($query, 'usr', $context)->wrap('AND ', '')
+        );
+        $sql->replace_comment(
+            'tenant',
+            self::get_tenant_related_users_where('usr.id', $context, 'AND')
+        );
+        $sql->replace_comment(
+            'orderby',
+            self::get_user_search_orderby($query, 'usr', $context)->wrap('ORDER BY ', '')
+        );
 
-        $sqlquery = <<<SQL
-            SELECT usr.*
-              FROM {user} usr
-              $cohortjoin
-         LEFT JOIN {tool_murelation_subordinate} sub ON sub.userid = usr.id AND sub.frameworkid = :fwid
-             WHERE {$searchsql} {$tenantwhere}
-                   AND sub.id IS NULL
-                   AND usr.deleted = 0 AND usr.confirmed = 1
-SQL;
-
-        $sqlquery .= " ORDER BY {$sortsql}";
-
-        $users = $DB->get_records_sql($sqlquery, $params, 0, $CFG->maxusersperpage + 1);
+        $users = $DB->get_records_sql($sql->sql, $sql->params, 0, $CFG->maxusersperpage + 1);
 
         return self::prepare_result($users, $context);
     }

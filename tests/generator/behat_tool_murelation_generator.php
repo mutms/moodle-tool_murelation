@@ -128,9 +128,12 @@ class behat_tool_murelation_generator extends behat_generator_base {
      * Gets the cohort id from idnumber.
      *
      * @param string $idnumber
-     * @return int
+     * @return int|null
      */
-    protected function get_managecohort_id(string $idnumber): int {
+    protected function get_managecohort_id(string $idnumber): ?int {
+        if ($idnumber === '') {
+            return null;
+        }
         return $this->get_cohort_id($idnumber);
     }
 
@@ -138,9 +141,12 @@ class behat_tool_murelation_generator extends behat_generator_base {
      * Gets the supervisor candidates cohort id from idnumber.
      *
      * @param string $idnumber
-     * @return int
+     * @return int|null
      */
-    protected function get_supervisorcohort_id(string $idnumber): int {
+    protected function get_supervisorcohort_id(string $idnumber): ?int {
+        if ($idnumber === '') {
+            return null;
+        }
         return $this->get_cohort_id($idnumber);
     }
 
@@ -148,9 +154,12 @@ class behat_tool_murelation_generator extends behat_generator_base {
      * Gets the supervisor role id from shorname.
      *
      * @param string $shorname
-     * @return int
+     * @return int|null
      */
-    protected function get_supervisorrole_id(string $shorname): int {
+    protected function get_supervisorrole_id(string $shorname): ?int {
+        if ($shorname === '') {
+            return null;
+        }
         return $this->get_role_id($shorname);
     }
 
@@ -158,9 +167,12 @@ class behat_tool_murelation_generator extends behat_generator_base {
      * Gets the subordinate candidates cohort id from idnumber.
      *
      * @param string $idnumber
-     * @return int
+     * @return int|null
      */
-    protected function get_subordinatecohort_id(string $idnumber): int {
+    protected function get_subordinatecohort_id(string $idnumber): ?int {
+        if ($idnumber === '') {
+            return null;
+        }
         return $this->get_cohort_id($idnumber);
     }
 

@@ -72,6 +72,8 @@ if (has_capability('tool/murelation:viewframeworks', $syscontext)) {
 
     $url = new moodle_url('/admin/tool/murelation/management/framework_teams.php', ['id' => $framework->id]);
     $PAGE->navbar->add(get_string('teams', 'tool_murelation'), $url);
+} else {
+    $url = null;
 }
 $PAGE->navbar->add($teamname, $url);
 

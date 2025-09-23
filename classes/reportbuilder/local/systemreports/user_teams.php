@@ -139,6 +139,7 @@ final class user_teams extends system_report {
 
         $this->add_column_from_entity('supervisor:teamidnumber');
         $this->add_column_from_entity('framework:supervisortitle');
+        $this->add_column_from_entity('supervisor:supmanaged');
         $this->add_column_from_entity('supervisor:subordinates');
 
         $this->set_initial_sort_column('supervisor:teamname', SORT_ASC);

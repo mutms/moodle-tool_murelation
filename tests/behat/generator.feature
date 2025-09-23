@@ -56,6 +56,7 @@ Feature: Behat tool_murelation generator usage
       | Framework 1    |              | Supervisors      | Supervisor        |                 | Subordinate       |
       | Framework 2    |              | Teams            | Supervisor        |                 | Subordinate       |
       | Framework 3    | fw3          | Supervisors      | Ucitel            | UManager        | Zak               |
+      | Framework 4    | fw4          | Teams            | Velitel           | TManager        | Pesak             |
 
     And I follow "Framework 1"
     And I should see "Framework 1" in the "Framework name" definition list item

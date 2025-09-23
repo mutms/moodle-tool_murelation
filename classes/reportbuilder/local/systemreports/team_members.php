@@ -115,7 +115,7 @@ final class team_members extends system_report {
         if ($this->get_context()->id != $context->id) {
             return false;
         }
-        return has_capability('tool/murelation:viewframeworks', $context);
+        return has_capability('tool/murelation:viewpositions', $context);
     }
 
     /**

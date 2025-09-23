@@ -40,7 +40,7 @@ final class members_create extends \tool_mulib\local\ajax_form {
         $supervisor = $this->_customdata['supervisor'];
         $framework = $this->_customdata['framework'];
         $context = $this->_customdata['context'];
-        $this->wsarguments = ['frameworkid' => $supervisor->frameworkid, 'supervisorid' => $supervisor->id];
+        $this->wsarguments = ['supervisorid' => $supervisor->id];
 
         $supervisortitle = format_string($framework->supervisortitle);
         $subordinatestitle = format_string($framework->subordinatestitle);
@@ -102,17 +102,17 @@ final class members_create extends \tool_mulib\local\ajax_form {
         $supervisor = $this->_customdata['supervisor'];
         $context = $this->_customdata['context'];
 
-        foreach ($data['userids'] as $userid) {
+        foreach ($data['subuserids'] as $userid) {
             $error = members_create_subuserids::validate_value($userid, $this->wsarguments, $context);
             if ($error !== null) {
-                $errors['userids'] = $error;
+                $errors['subuserids'] = $error;
                 break;
             }
         }
 
         if ($supervisor->maxsubordinates) {
             $current = $DB->count_records('tool_murelation_subordinate', ['supervisorid' => $supervisor->id]);
-            if ($current + count($data['userids']) > $supervisor->maxsubordinates) {
+            if ($current + count($data['subuserids']) > $supervisor->maxsubordinates) {
                 $errors['maxsubordinates'] = get_string('error');
             }
         }

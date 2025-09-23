@@ -81,9 +81,6 @@ final class supervisor_edit_userid extends \tool_mulib\external\form_autocomplet
             throw new \invalid_parameter_exception('User position cannot be managed');
         }
 
-        $params['subuserid'] = $subuser->id;
-        $params['frameworkid'] = $framework->id;
-
         $sql = new sql(
             "SELECT usr.*
                FROM {user} usr
