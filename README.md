@@ -23,19 +23,26 @@ To use this plugin you need to install [Additional MuTMS libraries plugin for Mo
 - Workflows usually start with subordinate selection.
 - Access control is defined in the subordinate user context with optional cohort restrictions.
 - If multi-tenancy is active then relationship belongs into the same tenant as the subordinate.
-- There are no team names.
-- No cohorts are created automatically.
+- There are no team or position names.
+- Cohorts cannot be created automatically.
+- When changing tenant memberships supervisors may be deleted to respect tenant separation, this is done at a later time from cron task.
 
-## Team mode
+## Teams mode
 
-- In team mode the emphasis is on groups of subordinates and all advanced options are available.
-- Supervisor position does not have to be assigned.
-- A new cohort is automatically created for team/subordinates.
+- In the Teams mode the emphasis is on groups of subordinates managed by a team supervisor.
+- The team name is required, team ID number is option, each team member may have different position name.
 - It is possible to add supervisor as own subordinate (aka team member).
-- Unlike in Supervisors mode, the supervisor position may be temporarily unassigned, the team name is required.
+- Unlike in Supervisors mode, the team supervisor position may be vacant.
 - Workflows usually start with team creation.
 - Access control is defined on the system or tenant context level with optional cohort restrictions. 
-- If multi-tenancy is active then team belongs into the currently selected tenant.
-- When changing tenant memberships team members may be removed to respect tenant separation rules.
+- If multi-tenancy is active then new teams are created in the current tenant.
 - Team name is required.
-- Team cohort may be created, all subordinates of the team are automatically added as cohort members.
+- Team cohort may be created, all subordinates of the team are then automatically added as cohort members.
+- When changing tenant memberships user may be removed from teams to respect tenant separation, this is done at a later time from cron task.
+
+## Planned features
+
+* Notification of related users in programs and certifications
+* Approvals by related users in programs allocations and certification assignments
+* Additional/temporary supervisors
+* Report builder content restrictions
