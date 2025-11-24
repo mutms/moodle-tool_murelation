@@ -1,5 +1,11 @@
 # Changelog
 
+## mu-5.0.3-03
+
+Release date: xx/11/2025
+
+* Added supervisor notifications in Programs and Certifications.
+
 ## mu-5.0.3-02
 
 Release date: 08/11/2025
