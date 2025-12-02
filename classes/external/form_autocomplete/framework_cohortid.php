@@ -63,7 +63,7 @@ final class framework_cohortid extends \tool_mulib\external\form_autocomplete\co
              /* where */
            ORDER BY ch.name ASC"
         );
-        $sql->replace_comment(
+        $sql = $sql->replace_comment(
             'where',
             self::get_cohort_search_query($query, 'ch')->wrap('WHERE ', '')
         );

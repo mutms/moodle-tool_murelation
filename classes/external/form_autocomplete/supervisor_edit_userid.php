@@ -91,20 +91,20 @@ final class supervisor_edit_userid extends \tool_mulib\external\form_autocomplet
             ['subuserid' => $subuser->id, 'frameworkid' => $framework->id]
         );
         if ($framework->supervisorcohortid) {
-            $sql->replace_comment(
+            $sql = $sql->replace_comment(
                 'cohortjoin',
                 new sql("JOIN {cohort_members} cm ON cm.userid = usr.id AND cm.cohortid = ?", [$framework->supervisorcohortid])
             );
         }
-        $sql->replace_comment(
+        $sql = $sql->replace_comment(
             'search',
             self::get_user_search_query($query, 'usr', $context)->wrap('AND ', '')
         );
-        $sql->replace_comment(
+        $sql = $sql->replace_comment(
             'tenant',
             self::get_tenant_related_users_where('usr.id', $context, 'AND')
         );
-        $sql->replace_comment(
+        $sql = $sql->replace_comment(
             'orderby',
             self::get_user_search_orderby($query, 'usr', $context)->wrap('ORDER BY ', '')
         );
