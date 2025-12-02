@@ -4,6 +4,7 @@
 
 Release date: xx/11/2025
 
+* Updated use of sql fragments API.
 * Added supervisor notifications in Programs and Certifications.
 
 ## mu-5.0.3-02

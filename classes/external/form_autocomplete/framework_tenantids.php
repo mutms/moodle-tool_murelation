@@ -72,7 +72,7 @@ final class framework_tenantids extends \tool_mulib\external\form_autocomplete\b
               WHERE t.archived = 0 /* search */
            ORDER BY t.name ASC"
         );
-        $sql->replace_comment(
+        $sql = $sql->replace_comment(
             'search',
             self::get_search_query($query, ['name', 'idnumber'], 't')->wrap('AND ', '')
         );
