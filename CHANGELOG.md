@@ -6,9 +6,13 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## [Unreleased](https://github.com/mutms/moodle-tool_murelation/compare/v4.5.10.02...HEAD)
 
+### Fixed
+
+- Fixed error on management page when framework not available in all tenants
+
 ### Added
 
-- Added new dialog to allow adding of cohort members to an axisting team 
+- Added new dialog to allow adding of cohort members to an existing team 
 
 ## [v4.5.10.02](https://github.com/mutms/moodle-tool_murelation/compare/v4.5.10.01...v4.5.10.02) - 2026-03-01
 
