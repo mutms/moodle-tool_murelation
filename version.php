@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'tool_murelation';
 $plugin->version = 2026032650;
 $plugin->requires = 2024100700;
-$plugin->supported = [500, 501];
+$plugin->supported = [500, 502];
 
 $plugin->release = 'v5.0.6.03+';
 
