@@ -25,6 +25,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
 use tool_murelation\local\uimode_teams;
 
@@ -33,8 +34,6 @@ use tool_murelation\local\uimode_teams;
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -51,9 +50,12 @@ if ($framework->uimode != framework::UIMODE_TEAMS) {
 $context = uimode_teams::get_team_context($framework, $supervisor);
 require_capability('tool/murelation:managepositions', $context);
 
-$currenturl = new moodle_url('/admin/tool/murelation/management/team_delete.php', ['frameworkid' => $id]);
+$currenturl = new moodle_url('/admin/tool/murelation/management/team_delete.php', ['id' => $id]);
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('team_delete', 'tool_murelation');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/team.php', ['id' => $supervisor->id]);
 
@@ -61,14 +63,16 @@ if (!uimode_teams::can_update_team($framework, $supervisor)) {
     redirect($returnurl);
 }
 
-$form = new \tool_murelation\local\form\team_delete(null, ['supervisor' => $supervisor, 'framework' => $framework]);
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\team_delete($currenturl, [], ['supervisor' => $supervisor, 'framework' => $framework]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
     uimode_teams::team_delete($supervisor->id);
     $returnurl = new moodle_url('/admin/tool/murelation/management/framework_teams.php', ['id' => $supervisor->frameworkid]);
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

@@ -25,17 +25,16 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_mulib\muform\handler;
+use tool_murelation\muform\autocomplete\members_add_cohort_cohortid;
 use tool_murelation\local\framework;
 use tool_murelation\local\uimode_teams;
-use tool_murelation\external\form_autocomplete\members_add_cohort_cohortid;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -50,9 +49,12 @@ if ($framework->uimode != framework::UIMODE_TEAMS) {
 }
 $context = uimode_teams::get_team_context($framework, $supervisor);
 
-$currenturl = new moodle_url('/admin/tool/murelation/management/members_create.php', ['supervisorid' => $supervisorid]);
+$currenturl = new moodle_url('/admin/tool/murelation/management/members_add_cohort.php', ['supervisorid' => $supervisorid]);
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('members_add_cohort_a', 'tool_murelation', format_string($framework->subordinatestitle));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/team.php', ['id' => $supervisor->id]);
 
@@ -60,18 +62,18 @@ if (!uimode_teams::can_manage_members($framework, $supervisor)) {
     redirect($returnurl);
 }
 
-$form = new \tool_murelation\local\form\members_add_cohort(
-    null,
-    ['supervisor' => $supervisor, 'framework' => $framework, 'context' => $context]
-);
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\members_add_cohort($currenturl, [], ['supervisor' => $supervisor, 'framework' => $framework]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
-    $data->subuserids = members_add_cohort_cohortid::get_candidates($supervisorid, $data->cohortid);
+    $data->supervisorid = $supervisor->id;
+    $data->subuserids = members_add_cohort_cohortid::get_candidates($supervisor->id, (int)$data->cohortid);
     unset($data->cohortid);
     uimode_teams::members_create($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

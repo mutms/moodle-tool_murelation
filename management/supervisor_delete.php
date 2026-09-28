@@ -25,16 +25,15 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_murelation\local\uimode_supervisors;
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
+use tool_murelation\local\uimode_supervisors;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -58,6 +57,9 @@ $currenturl = new moodle_url('/admin/tool/murelation/management/supervisor_delet
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('supervisor_delete_a', 'tool_murelation', format_string($framework->supervisortitle));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $subordinate = $DB->get_record('tool_murelation_subordinate', ['frameworkid' => $framework->id, 'userid' => $subuser->id]);
 if (!$subordinate) {
@@ -74,16 +76,15 @@ if (!uimode_supervisors::can_manage_subordinate($framework, $subuser->id)) {
     redirect($returnurl);
 }
 
-$form = new \tool_murelation\local\form\supervisor_delete(
-    null,
-    ['framework' => $framework, 'subuser' => $subuser, 'supuser' => $supuser]
-);
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\supervisor_delete($currenturl, [], ['framework' => $framework, 'subuser' => $subuser, 'supuser' => $supuser]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
     \tool_murelation\local\supervisor::delete($supervisor->id);
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

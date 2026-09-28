@@ -45,9 +45,9 @@ $buttons = [];
 
 if (has_capability('tool/murelation:manageframeworks', $syscontext)) {
     $url = new moodle_url('/admin/tool/murelation/management/framework_create.php');
-    $button = new tool_mulib\output\ajax_form\button($url, get_string('framework_create', 'tool_murelation'));
+    $button = new tool_mulib\output\muform\dialog\button($url, get_string('framework_create', 'tool_murelation'));
     $button->set_form_size('xl');
-    $button->set_submitted_action($button::SUBMITTED_ACTION_REDIRECT);
+    $button->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
     $buttons[] = $OUTPUT->render($button);
 }
 

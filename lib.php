@@ -54,19 +54,19 @@ function tool_murelation_myprofile_navigation(core_user\output\myprofile\tree $t
             $supname = html_writer::link($url, $supname);
             $dropdown = new \tool_mulib\output\dropdown(get_string('actions_a', 'tool_murelation', $supervisortitle));
             if ($framework->canmanage) {
-                $link = new tool_mulib\output\ajax_form\link(
-                    formurl: new moodle_url('/admin/tool/murelation/management/supervisor_edit.php', ['frameworkid' => $framework->id, 'subuserid' => $user->id]),
+                $link = new tool_mulib\output\muform\dialog\link(
+                    url: new moodle_url('/admin/tool/murelation/management/supervisor_edit.php', ['frameworkid' => $framework->id, 'subuserid' => $user->id]),
                     text: get_string('supervisor_update_a', 'tool_murelation', $supervisortitle),
                     pixname: 'i/edit'
                 );
-                $dropdown->add_ajax_form($link);
-                $link = new tool_mulib\output\ajax_form\link(
-                    formurl: new moodle_url('/admin/tool/murelation/management/supervisor_delete.php', ['frameworkid' => $framework->id, 'subuserid' => $user->id]),
+                $dropdown->add_dialog($link);
+                $link = new tool_mulib\output\muform\dialog\link(
+                    url: new moodle_url('/admin/tool/murelation/management/supervisor_delete.php', ['frameworkid' => $framework->id, 'subuserid' => $user->id]),
                     text: get_string('supervisor_delete_a', 'tool_murelation', $supervisortitle),
                     pixname: 'i/delete'
                 );
                 $link->add_class('text-danger');
-                $dropdown->add_ajax_form($link);
+                $dropdown->add_dialog($link);
             }
             if ($dropdown->has_items()) {
                 $supname .= $OUTPUT->render($dropdown);
@@ -81,12 +81,12 @@ function tool_murelation_myprofile_navigation(core_user\output\myprofile\tree $t
             ));
         } else if ($framework->canmanage) {
             $dropdown = new \tool_mulib\output\dropdown(get_string('actions_a', 'tool_murelation', $supervisortitle));
-            $link = new tool_mulib\output\ajax_form\link(
-                formurl: new moodle_url('/admin/tool/murelation/management/supervisor_edit.php', ['frameworkid' => $framework->id, 'subuserid' => $user->id]),
+            $link = new tool_mulib\output\muform\dialog\link(
+                url: new moodle_url('/admin/tool/murelation/management/supervisor_edit.php', ['frameworkid' => $framework->id, 'subuserid' => $user->id]),
                 text: get_string('supervisor_create_a', 'tool_murelation', $supervisortitle),
                 pixname: 'i/edit'
             );
-            $dropdown->add_ajax_form($link);
+            $dropdown->add_dialog($link);
 
             $actions = $OUTPUT->render($dropdown);
             $tree->add_node(new core_user\output\myprofile\node(

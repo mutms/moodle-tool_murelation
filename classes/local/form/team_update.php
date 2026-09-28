@@ -19,7 +19,16 @@
 
 namespace tool_murelation\local\form;
 
-use tool_murelation\external\form_autocomplete\team_update_userid;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\number;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\form;
+use tool_mulib\muform\validator\required_if_visible;
+use tool_murelation\muform\autocomplete\team_update_userid;
 
 /**
  * Update team.
@@ -28,115 +37,59 @@ use tool_murelation\external\form_autocomplete\team_update_userid;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class team_update extends \tool_mulib\local\ajax_form {
-    /** @var array */
-    protected $wsarguments;
+final class team_update extends form {
+    use details_trait;
 
     #[\Override]
-    protected function definition() {
-        global $DB;
+    protected function definition(): void {
+        $framework = $this->get_extra_data()['framework'];
+        $supervisor = $this->get_extra_data()['supervisor'];
 
-        $mform = $this->_form;
-        $supervisor = $this->_customdata['supervisor'];
-        $framework = $this->_customdata['framework'];
-        $context = $this->_customdata['context'];
-        $this->wsarguments = ['supervisorid' => $supervisor->id];
+        $this->add_framework_details($framework);
+        $this->add_tenant_details($supervisor->tenantid ? (int)$supervisor->tenantid : null);
 
-        $supervisortitle = format_string($framework->supervisortitle);
+        $teamname = new text('teamname', get_string('team_name', 'tool_murelation'), ['maxlength' => 254]);
+        $teamname->set_required(true);
+        $this->add($teamname);
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+        $this->add(new text('teamidnumber', get_string('team_idnumber', 'tool_murelation'), ['type' => 'rawtext', 'maxlength' => 100]));
 
-        $mform->addElement('static', 'fwname', get_string('framework_name', 'tool_murelation'), format_string($framework->name));
-        if ($framework->idnumber !== null) {
-            $mform->addElement('static', 'fwidnumber', get_string('framework_idnumber', 'tool_murelation'), s($framework->idnumber));
-        }
+        $source = new team_update_userid((int)$supervisor->id);
+        $this->add(new autocomplete('userid', self::get_title($framework->supervisortitle), $source));
 
-        if (\tool_mulib\local\mulib::is_mutenancy_active() && $supervisor->tenantid) {
-            $tenant = \tool_mutenancy\local\tenant::fetch($supervisor->tenantid);
-            $mform->addElement('static', 'tenant', get_string('tenant', 'tool_mutenancy'), format_string($tenant->name));
-        }
+        $this->add(new checkbox('supmanaged', get_string('team_supmanaged', 'tool_murelation')));
 
-        $mform->addElement('text', 'teamname', get_string('team_name', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->setType('teamname', PARAM_TEXT);
-        $mform->addRule('teamname', get_string('required'), 'required', null, 'client');
+        $this->add(new number('maxsubordinates', get_string('team_maxsubordinates', 'tool_murelation'), ['min' => 0, 'width' => 'small']));
 
-        $mform->addElement('text', 'teamidnumber', get_string('team_idnumber', 'tool_murelation'), 'maxlength="100" size="50"');
-        $mform->setType('teamidnumber', PARAM_RAW); // Idnumbers are plain text.
-
-        team_update_userid::add_element($mform, $this->wsarguments, 'userid', $supervisortitle, $context);
-        $mform->setType('userid', PARAM_INT);
-
-        $mform->addElement('advcheckbox', 'supmanaged', get_string('team_supmanaged', 'tool_murelation'));
-
-        $mform->addElement('text', 'maxsubordinates', get_string('team_maxsubordinates', 'tool_murelation'), ['size' => 3]);
-        $mform->setType('maxsubordinates', PARAM_INT);
-
-        $cohort = false;
-        if ($supervisor->teamcohortid) {
-            $cohort = $DB->get_record('cohort', ['id' => $supervisor->teamcohortid]);
-        }
-
-        if (!$cohort) {
-            $mform->addElement('advcheckbox', 'teamcohortcreate', get_string('team_cohort_create', 'tool_murelation'));
-        }
-        $mform->addElement('text', 'teamcohortname', get_string('team_cohort_name', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->setType('teamcohortname', PARAM_TEXT);
-        if (!$cohort) {
-            $mform->hideIf('teamcohortname', 'teamcohortcreate', 'notchecked');
+        $hascohort = $this->get_extra_data()['hascohort'];
+        $dm = $this->get_display_manager();
+        $teamcohortname = new text('teamcohortname', get_string('team_cohort_name', 'tool_murelation'), ['maxlength' => 254]);
+        if ($hascohort) {
+            $teamcohortname->set_required(true);
         } else {
-            $mform->setDefault('teamcohortname', $cohort->name);
-            $mform->addRule('teamcohortname', get_string('required'), 'required', null, 'client');
+            $this->add(new checkbox('teamcohortcreate', get_string('team_cohort_create', 'tool_murelation')));
+            $teamcohortname->set_required_marker(true);
+            $teamcohortname->add_validator(new required_if_visible());
+            $dm->hide_if('teamcohortname', 'teamcohortcreate', 'notchecked');
         }
+        $this->add($teamcohortname);
 
-        $this->add_action_buttons(true, get_string('team_update', 'tool_murelation'));
-
-        $this->set_data($supervisor);
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('team_update', 'tool_murelation')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 
     #[\Override]
-    public function validation($data, $files) {
+    protected function validation(array $data, array &$allerrors): void {
         global $DB;
-        $errors = parent::validation($data, $files);
-
-        $supervisor = $this->_customdata['supervisor'];
-        $context = $this->_customdata['context'];
-
-        if (trim($data['teamname']) === '') {
-            $errors['teamname'] = get_string('required');
-        }
-
-        if (trim($data['teamidnumber']) !== $data['teamidnumber']) {
-            $errors['teamidnumber'] = get_string('error');
-        } else if ($data['teamidnumber'] !== '') {
+        $idnumber = $data['teamidnumber'];
+        if (trim($idnumber) !== $idnumber) {
+            $allerrors['teamidnumber'][] = get_string('error');
+        } else if ($idnumber !== '') {
             $select = "LOWER(teamidnumber) = LOWER(?) AND id <> ?";
-            $params = [$data['teamidnumber'], $supervisor->id];
-            if ($DB->record_exists_select('tool_murelation_supervisor', $select, $params)) {
-                $errors['teamidnumber'] = get_string('error');
+            if ($DB->record_exists_select('tool_murelation_supervisor', $select, [$idnumber, $this->get_extra_data()['supervisor']->id])) {
+                $allerrors['teamidnumber'][] = get_string('error');
             }
         }
-
-        if ($data['userid']) {
-            $error = team_update_userid::validate_value($data['userid'], $this->wsarguments, $context);
-            if ($error !== null) {
-                $errors['userid'] = $error;
-            }
-        }
-
-        if ($data['maxsubordinates'] < 0) {
-            $errors['maxsubordinates'] = get_string('error');
-        }
-
-        $cohort = false;
-        if ($supervisor->teamcohortid) {
-            $cohort = $DB->get_record('cohort', ['id' => $supervisor->teamcohortid]);
-        }
-        if ($cohort || $data['teamcohortcreate']) {
-            if (trim($data['teamcohortname']) === '') {
-                $errors['teamcohortname'] = get_string('required');
-            }
-        }
-
-        return $errors;
     }
 }

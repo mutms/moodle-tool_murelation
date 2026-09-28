@@ -19,7 +19,10 @@
 
 namespace tool_murelation\local\form;
 
-use tool_murelation\external\form_autocomplete\position_edit_supuserid;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Delete supervisor for given subordinate user.
@@ -28,36 +31,22 @@ use tool_murelation\external\form_autocomplete\position_edit_supuserid;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class supervisor_delete extends \tool_mulib\local\ajax_form {
+final class supervisor_delete extends form {
+    use details_trait;
+
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $subuser = $this->_customdata['subuser'];
-        $supuser = $this->_customdata['supuser'];
-        $framework = $this->_customdata['framework'];
+    protected function definition(): void {
+        $framework = $this->get_extra_data()['framework'];
+        $supervisortitle = self::get_title($framework->supervisortitle);
 
-        $supervisortitle = format_string($framework->supervisortitle);
-        $subordinatetitle = format_string($framework->subordinatetitle);
-
-        $mform->addElement('hidden', 'subuserid');
-        $mform->setType('subuserid', PARAM_INT);
-        $mform->setDefault('subuserid', $subuser->id);
-
-        $mform->addElement('hidden', 'frameworkid');
-        $mform->setType('frameworkid', PARAM_INT);
-        $mform->setDefault('frameworkid', $framework->id);
-
-        $mform->addElement('static', 'fwname', get_string('framework_name', 'tool_murelation'), format_string($framework->name));
-        if ($framework->idnumber !== null) {
-            $mform->addElement('static', 'fwidnumber', get_string('framework_idnumber', 'tool_murelation'), s($framework->idnumber));
+        $this->add_framework_details($framework);
+        $this->add_user_details('subuser', self::get_title($framework->subordinatetitle), (int)$this->get_extra_data()['subuser']->id);
+        if ($this->get_extra_data()['supuser']) {
+            $this->add_user_details('supuser', $supervisortitle, (int)$this->get_extra_data()['supuser']->id);
         }
 
-        $mform->addElement('static', 'subuser', $subordinatetitle, fullname($subuser));
-
-        if ($supuser) {
-            $mform->addElement('static', 'supuser', $supervisortitle, fullname($supuser));
-        }
-
-        $this->add_action_buttons(true, get_string('supervisor_delete_a', 'tool_murelation', $supervisortitle));
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('supervisor_delete_a', 'tool_murelation', $supervisortitle)), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

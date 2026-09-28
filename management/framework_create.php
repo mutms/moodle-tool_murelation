@@ -25,14 +25,13 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -44,24 +43,29 @@ require_capability('tool/murelation:manageframeworks', $context);
 $currenturl = new moodle_url('/admin/tool/murelation/management/framework_create.php');
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('framework_create', 'tool_murelation');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/index.php');
 
-$framework = new \stdClass();
-$framework->name = '';
-$framework->idnumber = '';
-$framework->description = '';
-$framework->descriptionformat = FORMAT_HTML;
+$current = [
+    'descriptionformat' => FORMAT_HTML,
+    'visibility' => framework::VISIBILITY_SUBORDINATES,
+    'alltenants' => 1,
+];
+$handler = handler::from_request();
 
-$editoroptions = framework::get_description_editor_options();
+$form = new \tool_murelation\local\form\framework_create($currenturl, $current);
 
-$form = new \tool_murelation\local\form\framework_create(null, ['data' => $framework, 'editoroptions' => $editoroptions]);
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $framework = framework::create($data);
-    $returnurl = new moodle_url('/admin/tool/murelation/management/framework.php', ['id' => $framework->id]);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    $framework = framework::create($data);
+    $returnurl = new moodle_url('/admin/tool/murelation/management/framework.php', ['id' => $framework->id]);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

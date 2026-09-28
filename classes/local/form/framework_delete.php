@@ -19,6 +19,11 @@
 
 namespace tool_murelation\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Delete relation framework.
  *
@@ -26,28 +31,15 @@ namespace tool_murelation\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class framework_delete extends \tool_mulib\local\ajax_form {
-    #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $data = $this->_customdata['data'];
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $data->id);
-
-        $mform->addElement('static', 'name', get_string('framework_name', 'tool_murelation'), format_string($data->name));
-        if ($data->idnumber !== null) {
-            $mform->addElement('static', 'idnumber', get_string('framework_idnumber', 'tool_murelation'), s($data->idnumber));
-        }
-
-        $this->add_action_buttons(true, get_string('framework_delete', 'tool_murelation'));
-    }
+final class framework_delete extends form {
+    use details_trait;
 
     #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
+    protected function definition(): void {
+        $this->add_framework_details($this->get_extra_data()['framework']);
 
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('framework_delete', 'tool_murelation')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

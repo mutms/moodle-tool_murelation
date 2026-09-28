@@ -16,98 +16,47 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
-// phpcs:disable moodle.Commenting.DocblockDescription.Missing
 
-namespace tool_murelation\phpunit\external\form_autocomplete;
+namespace tool_murelation\phpunit\muform\autocomplete;
 
-use tool_murelation\external\form_autocomplete\framework_cohortid;
+use tool_murelation\muform\autocomplete\framework_cohortid;
 
 /**
- * Relation framework cohort selection external function tests.
+ * Relation framework cohort autocomplete source tests.
  *
  * @group       MuTMS
  * @package     tool_murelation
- * @copyright   2025 Petr Skoda
+ * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
- * @coversDefaultClass \tool_murelation\external\form_autocomplete\framework_cohortid
+ * @covers \tool_murelation\muform\autocomplete\framework_cohortid
  */
 final class framework_cohortid_test extends \advanced_testcase {
+    #[\Override]
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
 
-    /**
-     * @covers ::execute
-     */
-    public function test_execute(): void {
+    public function test_constructor(): void {
         $syscontext = \context_system::instance();
 
         $roleid = create_role('man', 'man', 'man');
         assign_capability('tool/murelation:manageframeworks', CAP_ALLOW, $roleid, $syscontext->id);
 
         $user0 = $this->getDataGenerator()->create_user();
-        $manager = $this->getDataGenerator()->create_user([
-            'firstname' => 'Global',
-            'lastname' => 'Manager',
-            'email' => 'manager@example.com',
-        ]);
+        $manager = $this->getDataGenerator()->create_user();
         role_assign($roleid, $manager->id, $syscontext->id);
 
-        $cohort1 = $this->getDataGenerator()->create_cohort([
-            'name' => 'First kohort',
-            'idnumber' => 'koh1',
-        ]);
-        $cohort2 = $this->getDataGenerator()->create_cohort([
-            'name' => 'Second kohort',
-            'idnumber' => 'koh2',
-        ]);
-        $cohort3 = $this->getDataGenerator()->create_cohort([
-            'name' => 'Third kohort',
-            'idnumber' => 'koh3',
-            'visible' => 0,
-        ]);
-
         $this->setUser($manager);
-
-        $result = framework_cohortid::execute('');
-        $this->assertfalse($result['overflow']);
-        $expected = [
-            ['value' => $cohort1->id, 'label' => $cohort1->name],
-            ['value' => $cohort2->id, 'label' => $cohort2->name],
-        ];
-        $this->assertSame($expected, $result['list']);
-
-        $result = framework_cohortid::execute('First');
-        $this->assertfalse($result['overflow']);
-        $expected = [
-            ['value' => $cohort1->id, 'label' => $cohort1->name],
-        ];
-        $this->assertSame($expected, $result['list']);
-
-        $result = framework_cohortid::execute('koh2');
-        $this->assertfalse($result['overflow']);
-        $expected = [
-            ['value' => $cohort2->id, 'label' => $cohort2->name],
-        ];
-        $this->assertSame($expected, $result['list']);
-
-        assign_capability('moodle/cohort:view', CAP_ALLOW, $roleid, $syscontext->id);
-        $this->setUser($manager);
-
-        $result = framework_cohortid::execute('');
-        $this->assertfalse($result['overflow']);
-        $expected = [
-            ['value' => $cohort1->id, 'label' => $cohort1->name],
-            ['value' => $cohort2->id, 'label' => $cohort2->name],
-            ['value' => $cohort3->id, 'label' => $cohort3->name],
-        ];
-        $this->assertSame($expected, $result['list']);
+        $source = new framework_cohortid(0);
+        $this->assertSame([0], $source->get_args());
+        $source = new framework_cohortid(3);
+        $this->assertSame([3], $source->get_args());
 
         $this->setUser($user0);
         try {
-            framework_cohortid::execute('');
+            new framework_cohortid(0);
             $this->fail('exception expected');
         } catch (\core\exception\moodle_exception $ex) {
             $this->assertInstanceOf(\required_capability_exception::class, $ex);
@@ -115,10 +64,7 @@ final class framework_cohortid_test extends \advanced_testcase {
         }
     }
 
-    /**
-     * @covers ::validate_value
-     */
-    public function test_validate_value(): void {
+    public function test_search(): void {
         $syscontext = \context_system::instance();
 
         $roleid = create_role('man', 'man', 'man');
@@ -146,14 +92,84 @@ final class framework_cohortid_test extends \advanced_testcase {
         ]);
 
         $this->setUser($manager);
-        $this->assertSame(null, framework_cohortid::validate_value($cohort1->id, [], $syscontext));
-        $this->assertSame(null, framework_cohortid::validate_value($cohort2->id, [], $syscontext));
-        $this->assertSame('Error', framework_cohortid::validate_value($cohort3->id, [], $syscontext));
-        $this->assertSame(null, framework_cohortid::validate_value($cohort3->id, ['currentValue' => $cohort3->id], $syscontext));
-        $this->assertSame('Error', framework_cohortid::validate_value(-10, [], $syscontext));
+        $source = new framework_cohortid(0);
+
+        $this->assertSame([
+            (int)$cohort1->id => $cohort1->name,
+            (int)$cohort2->id => $cohort2->name,
+        ], $source->search('', 50));
+
+        $this->assertSame([
+            (int)$cohort1->id => $cohort1->name,
+        ], $source->search('First', 50));
+
+        $this->assertSame([
+            (int)$cohort2->id => $cohort2->name,
+        ], $source->search('koh2', 50));
+
+        $this->assertNull($source->search('', 1));
+        $this->assertSame([
+            (int)$cohort1->id => $cohort1->name,
+            (int)$cohort2->id => $cohort2->name,
+        ], $source->search('', 2));
 
         assign_capability('moodle/cohort:view', CAP_ALLOW, $roleid, $syscontext->id);
         $this->setUser($manager);
-        $this->assertSame(null, framework_cohortid::validate_value($cohort3->id, [], $syscontext));
+
+        $this->assertSame([
+            (int)$cohort1->id => $cohort1->name,
+            (int)$cohort2->id => $cohort2->name,
+            (int)$cohort3->id => $cohort3->name,
+        ], $source->search('', 50));
+    }
+
+    public function test_label(): void {
+        $syscontext = \context_system::instance();
+
+        $roleid = create_role('man', 'man', 'man');
+        assign_capability('tool/murelation:manageframeworks', CAP_ALLOW, $roleid, $syscontext->id);
+
+        $manager = $this->getDataGenerator()->create_user([
+            'firstname' => 'Global',
+            'lastname' => 'Manager',
+            'email' => 'manager@example.com',
+        ]);
+        role_assign($roleid, $manager->id, $syscontext->id);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort([
+            'name' => 'First kohort',
+            'idnumber' => 'koh1',
+        ]);
+        $cohort2 = $this->getDataGenerator()->create_cohort([
+            'name' => 'Second kohort',
+            'idnumber' => 'koh2',
+        ]);
+        $cohort3 = $this->getDataGenerator()->create_cohort([
+            'name' => 'Third kohort',
+            'idnumber' => 'koh3',
+            'visible' => 0,
+        ]);
+
+        $this->setUser($manager);
+
+        $source = new framework_cohortid(0);
+        $this->assertSame($cohort1->name, $source->label((string)$cohort1->id));
+        $this->assertSame($cohort2->name, $source->label((string)$cohort2->id));
+        $this->assertNull($source->label((string)$cohort3->id));
+        $this->assertNull($source->label('-10'));
+        $this->assertNull($source->label('999999'));
+        $this->assertNull($source->label('abc'));
+        $this->assertNull($source->label(''));
+        $this->assertNull($source->validate((string)$cohort1->id));
+
+        // Current value is always accepted.
+        $source = new framework_cohortid((int)$cohort3->id);
+        $this->assertSame($cohort3->name, $source->label((string)$cohort3->id));
+        $this->assertSame($cohort1->name, $source->label((string)$cohort1->id));
+
+        assign_capability('moodle/cohort:view', CAP_ALLOW, $roleid, $syscontext->id);
+        $this->setUser($manager);
+        $source = new framework_cohortid(0);
+        $this->assertSame($cohort3->name, $source->label((string)$cohort3->id));
     }
 }

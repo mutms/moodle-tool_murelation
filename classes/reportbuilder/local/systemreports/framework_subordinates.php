@@ -171,7 +171,7 @@ final class framework_subordinates extends system_report {
         $supervisortitle = format_string($framework->supervisortitle);
 
         $url = new moodle_url('/admin/tool/murelation/management/supervisor_edit.php', ['subuserid' => ':subuserid', 'frameworkid' => $framework->id]);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('supervisor_update_a', 'tool_murelation', $supervisortitle), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('supervisor_update_a', 'tool_murelation', $supervisortitle), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row) use ($framework): bool {
                 if (!$row->subuserid) {
@@ -181,7 +181,7 @@ final class framework_subordinates extends system_report {
             }));
 
         $url = new moodle_url('/admin/tool/murelation/management/supervisor_delete.php', ['subuserid' => ':subuserid', 'frameworkid' => $framework->id]);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('supervisor_delete_a', 'tool_murelation', $supervisortitle), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('supervisor_delete_a', 'tool_murelation', $supervisortitle), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row) use ($framework): bool {
                 if (!$row->subuserid) {

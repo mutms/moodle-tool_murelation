@@ -25,14 +25,13 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -46,23 +45,28 @@ require_capability('tool/murelation:manageframeworks', $syscontext);
 $currenturl = new moodle_url('/admin/tool/murelation/management/framework_update.php', ['id' => $id]);
 $PAGE->set_context($syscontext);
 $PAGE->set_url($currenturl);
+$title = get_string('framework_update', 'tool_murelation');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $framework = $DB->get_record('tool_murelation_framework', ['id' => $id], '*', MUST_EXIST);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/index.php');
 
-$data = clone($framework);
+$current = (array)$framework;
+$current['tenantids'] = $DB->get_fieldset('tool_murelation_tenant_allow', 'tenantid', ['frameworkid' => $framework->id]);
+$handler = handler::from_request();
 
-$editoroptions = \tool_murelation\local\framework::get_description_editor_options();
-$data = file_prepare_standard_editor($data, 'description', $editoroptions);
-
-$form = new \tool_murelation\local\form\framework_update(null, ['data' => $data, 'editoroptions' => $editoroptions]);
+$form = new \tool_murelation\local\form\framework_update($currenturl, $current);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    framework::update($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    $data->id = $framework->id;
+    framework::update($data);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

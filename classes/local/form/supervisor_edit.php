@@ -19,7 +19,12 @@
 
 namespace tool_murelation\local\form;
 
-use tool_murelation\external\form_autocomplete\supervisor_edit_userid;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+use tool_murelation\muform\autocomplete\supervisor_edit_userid;
 
 /**
  * Create or update supervisor for given subordinate user.
@@ -28,69 +33,27 @@ use tool_murelation\external\form_autocomplete\supervisor_edit_userid;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class supervisor_edit extends \tool_mulib\local\ajax_form {
-    /** @var array */
-    protected $wsarguments;
+final class supervisor_edit extends form {
+    use details_trait;
 
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $subuser = $this->_customdata['subuser'];
-        $subordinate = $this->_customdata['subordinate'];
-        $supervisor = $this->_customdata['supervisor'];
-        $framework = $this->_customdata['framework'];
+    protected function definition(): void {
+        $framework = $this->get_extra_data()['framework'];
+        $subuser = $this->get_extra_data()['subuser'];
+        $supervisortitle = self::get_title($framework->supervisortitle);
 
-        $context = \context_user::instance($subuser->id);
-        $this->wsarguments = ['frameworkid' => $framework->id, 'subuserid' => $subuser->id];
+        $this->add_framework_details($framework);
+        $this->add_user_details('user', self::get_title($framework->subordinatetitle), (int)$subuser->id);
 
-        $supervisortitle = format_string($framework->supervisortitle);
-        $subordinatetitle = format_string($framework->subordinatetitle);
+        $userid = new autocomplete('userid', $supervisortitle, new supervisor_edit_userid((int)$framework->id, (int)$subuser->id));
+        $userid->set_required(true);
+        $this->add($userid);
 
-        $mform->addElement('hidden', 'subuserid');
-        $mform->setType('subuserid', PARAM_INT);
-        $mform->setDefault('subuserid', $subuser->id);
-
-        $mform->addElement('hidden', 'frameworkid');
-        $mform->setType('frameworkid', PARAM_INT);
-        $mform->setDefault('frameworkid', $framework->id);
-
-        $mform->addElement('static', 'fwname', get_string('framework_name', 'tool_murelation'), format_string($framework->name));
-        if ($framework->idnumber !== null) {
-            $mform->addElement('static', 'fwidnumber', get_string('framework_idnumber', 'tool_murelation'), s($framework->idnumber));
-        }
-
-        $mform->addElement('static', 'user', $subordinatetitle, fullname($subuser));
-
-        supervisor_edit_userid::add_element(
-            $mform,
-            $this->wsarguments,
-            'userid',
-            $supervisortitle,
-            $context
-        );
-        $mform->addRule('userid', get_string('required'), 'required', null, 'client');
-        if ($supervisor && $supervisor->userid) {
-            $mform->setDefault('userid', $supervisor->userid);
-        }
-
-        if ($subordinate) {
-            $this->add_action_buttons(true, get_string('supervisor_update_a', 'tool_murelation', $supervisortitle));
-        } else {
-            $this->add_action_buttons(true, get_string('supervisor_create_a', 'tool_murelation', $supervisortitle));
-        }
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        $subuser = $this->_customdata['subuser'];
-        $context = \context_user::instance($subuser->id);
-
-        $error = supervisor_edit_userid::validate_value($data['userid'], $this->wsarguments, $context);
-        if ($error !== null) {
-            $errors['userid'] = $error;
-        }
-
-        return $errors;
+        $label = $this->get_extra_data()['subordinate']
+            ? get_string('supervisor_update_a', 'tool_murelation', $supervisortitle)
+            : get_string('supervisor_create_a', 'tool_murelation', $supervisortitle);
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', $label), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

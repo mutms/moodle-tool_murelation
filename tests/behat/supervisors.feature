@@ -73,12 +73,12 @@ Feature: Supervisors management
     And I follow "Zaci"
 
     When I press "Add Zaci"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Ucitel | manager1@example.com |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Zaci   | student1@example.com,student2@example.com |
-    And I click on "Add Zaci" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | supuserid | Manager 1 |
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | subuserids | Student 1, Student 2 |
+    And I click on "Add Zaci" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Ucitel    |
       | Student 1  | student1@example.com | Manager 1 |
@@ -86,9 +86,9 @@ Feature: Supervisors management
 
     When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
     And I click on "Update Ucitel" "link" in the "Student 1" "table_row"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Ucitel | manager2@example.com |
-    And I click on "Update Ucitel" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | userid | Manager 2 |
+    And I click on "Update Ucitel" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Ucitel    |
       | Student 1  | student1@example.com | Manager 2 |
@@ -96,7 +96,7 @@ Feature: Supervisors management
 
     When I click on "Actions" "link_or_button" in the "Student 2" "table_row"
     And I click on "Remove Ucitel" "link" in the "Student 2" "table_row"
-    And I click on "Remove Ucitel" "button" in the ".modal-dialog" "css_element"
+    And I click on "Remove Ucitel" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Ucitel    |
       | Student 1  | student1@example.com | Manager 2 |
@@ -106,12 +106,12 @@ Feature: Supervisors management
     And I follow "Children"
 
     When I press "Add Children"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Parent | parent1@example.com |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Children   | student1@example.com,student2@example.com |
-    And I click on "Add Children" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | supuserid | Parent 1 |
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | subuserids | Student 1, Student 2 |
+    And I click on "Add Children" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Parent    |
       | Student 1  | student1@example.com | Parent 1  |
@@ -119,9 +119,9 @@ Feature: Supervisors management
 
     When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
     And I click on "Update Parent" "link" in the "Student 1" "table_row"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Parent | parent2@example.com |
-    And I click on "Update Parent" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | userid | Parent 2 |
+    And I click on "Update Parent" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Parent    |
       | Student 1  | student1@example.com | Parent 2  |
@@ -129,7 +129,7 @@ Feature: Supervisors management
 
     When I click on "Actions" "link_or_button" in the "Student 2" "table_row"
     And I click on "Remove Parent" "link" in the "Student 2" "table_row"
-    And I click on "Remove Parent" "button" in the ".modal-dialog" "css_element"
+    And I click on "Remove Parent" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Parent    |
       | Student 1  | student1@example.com | Parent 2  |
@@ -147,30 +147,30 @@ Feature: Supervisors management
 
     When I click on "Ucitel actions" "link_or_button"
     And I click on "Add Ucitel" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Ucitel   | manager1@example.com |
-    And I click on "Add Ucitel" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | userid | Manager 1 |
+    And I click on "Add Ucitel" "button" in the "dialog[open]" "css_element"
     And I should see "Not set" in the "Parent" definition list item
     And I should see "Manager 1" in the "Ucitel" definition list item
 
     When I click on "Parent actions" "link_or_button"
     And I click on "Add Parent" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Parent   | parent1@example.com |
-    And I click on "Add Parent" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | userid | Parent 1 |
+    And I click on "Add Parent" "button" in the "dialog[open]" "css_element"
     And I should see "Parent 1" in the "Parent" definition list item
     And I should see "Manager 1" in the "Ucitel" definition list item
 
     When I click on "Parent actions" "link_or_button"
     And I click on "Update Parent" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Parent   | parent2@example.com |
-    And I click on "Update Parent" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | userid | Parent 2 |
+    And I click on "Update Parent" "button" in the "dialog[open]" "css_element"
     And I should see "Parent 2" in the "Parent" definition list item
     And I should see "Manager 1" in the "Ucitel" definition list item
 
     When I click on "Parent actions" "link_or_button"
     And I click on "Remove Parent" "link"
-    And I click on "Remove Parent" "button" in the ".modal-dialog" "css_element"
+    And I click on "Remove Parent" "button" in the "dialog[open]" "css_element"
     And I should see "Not set" in the "Parent" definition list item
     And I should see "Manager 1" in the "Ucitel" definition list item

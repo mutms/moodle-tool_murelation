@@ -25,16 +25,15 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_murelation\local\uimode_supervisors;
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
+use tool_murelation\local\uimode_supervisors;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -75,16 +74,26 @@ if (!uimode_supervisors::can_manage_subordinate($framework, $subuser->id)) {
     redirect($returnurl);
 }
 
-$form = new \tool_murelation\local\form\supervisor_edit(
-    null,
-    ['framework' => $framework, 'subuser' => $subuser, 'subordinate' => $subordinate, 'supervisor' => $supervisor]
-);
+$current = ['userid' => $supervisor ? $supervisor->userid : null];
+$extra = ['framework' => $framework, 'subuser' => $subuser, 'subordinate' => $subordinate];
+$title = $subordinate ? get_string('supervisor_update_a', 'tool_murelation', format_string($framework->supervisortitle))
+    : get_string('supervisor_create_a', 'tool_murelation', format_string($framework->supervisortitle));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\supervisor_edit($currenturl, $current, $extra);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    uimode_supervisors::supervisor_edit($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    $data->frameworkid = $framework->id;
+    $data->subuserid = $subuser->id;
+    uimode_supervisors::supervisor_edit($data);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

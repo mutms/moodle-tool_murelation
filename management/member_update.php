@@ -25,8 +25,9 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_murelation\local\subordinate;
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
+use tool_murelation\local\subordinate;
 use tool_murelation\local\uimode_teams;
 
 /** @var moodle_database $DB */
@@ -34,8 +35,6 @@ use tool_murelation\local\uimode_teams;
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -51,9 +50,12 @@ if ($framework->uimode != framework::UIMODE_TEAMS) {
 }
 $context = uimode_teams::get_team_context($framework, $supervisor);
 
-$currenturl = new moodle_url('/admin/tool/murelation/management/member_delete.php', ['id' => $subordinate->id]);
+$currenturl = new moodle_url('/admin/tool/murelation/management/member_update.php', ['id' => $subordinate->id]);
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('member_update_a', 'tool_murelation', format_string($framework->subordinatetitle));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/team.php', ['id' => $supervisor->id]);
 
@@ -61,16 +63,16 @@ if (!uimode_teams::can_manage_members($framework, $supervisor)) {
     redirect($returnurl);
 }
 
-$form = new \tool_murelation\local\form\member_update(
-    null,
-    ['subordinate' => $subordinate, 'supervisor' => $supervisor, 'framework' => $framework]
-);
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\member_update($currenturl, $subordinate, ['subordinate' => $subordinate, 'supervisor' => $supervisor, 'framework' => $framework]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
+    $data->id = $subordinate->id;
     uimode_teams::member_update($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

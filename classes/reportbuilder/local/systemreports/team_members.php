@@ -166,7 +166,7 @@ final class team_members extends system_report {
         $subordinatetitle = format_string($framework->subordinatetitle);
 
         $url = new moodle_url('/admin/tool/murelation/management/member_update.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('member_update_a', 'tool_murelation', $subordinatetitle), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('member_update_a', 'tool_murelation', $subordinatetitle), 'i/delete');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row) use ($framework, $supervisor): bool {
                 if (!$row->id) {
@@ -177,7 +177,7 @@ final class team_members extends system_report {
             }));
 
         $url = new moodle_url('/admin/tool/murelation/management/member_delete.php', ['id' => ':id']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('member_delete_a', 'tool_murelation', $subordinatetitle), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('member_delete_a', 'tool_murelation', $subordinatetitle), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row) use ($framework, $supervisor): bool {
                 if (!$row->id) {

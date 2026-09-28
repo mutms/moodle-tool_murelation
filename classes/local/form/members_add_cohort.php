@@ -19,7 +19,14 @@
 
 namespace tool_murelation\local\form;
 
-use tool_murelation\external\form_autocomplete\members_add_cohort_cohortid;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\form;
+use tool_murelation\muform\autocomplete\members_add_cohort_cohortid;
 
 /**
  * Add cohort members as new team members.
@@ -28,82 +35,33 @@ use tool_murelation\external\form_autocomplete\members_add_cohort_cohortid;
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class members_add_cohort extends \tool_mulib\local\ajax_form {
-    /** @var array */
-    protected $wsarguments;
+final class members_add_cohort extends form {
+    use details_trait;
 
     #[\Override]
-    protected function definition() {
+    protected function definition(): void {
         global $DB;
+        $framework = $this->get_extra_data()['framework'];
+        $supervisor = $this->get_extra_data()['supervisor'];
 
-        $mform = $this->_form;
-        $supervisor = $this->_customdata['supervisor'];
-        $framework = $this->_customdata['framework'];
-        $context = $this->_customdata['context'];
-        $this->wsarguments = ['supervisorid' => $supervisor->id];
-
-        $supervisortitle = format_string($framework->supervisortitle);
-        $subordinatestitle = format_string($framework->subordinatestitle);
-
-        $mform->addElement('hidden', 'supervisorid');
-        $mform->setType('supervisorid', PARAM_INT);
-        $mform->setDefault('supervisorid', $supervisor->id);
-
-        $mform->addElement('static', 'fwname', get_string('framework_name', 'tool_murelation'), format_string($framework->name));
-        if ($framework->idnumber !== null) {
-            $mform->addElement('static', 'fwidnumber', get_string('framework_idnumber', 'tool_murelation'), s($framework->idnumber));
-        }
-
-        if (\tool_mulib\local\mulib::is_mutenancy_active() && $supervisor->tenantid) {
-            $tenant = \tool_mutenancy\local\tenant::fetch($supervisor->tenantid);
-            $mform->addElement('static', 'tenant', get_string('tenant', 'tool_mutenancy'), format_string($tenant->name));
-        }
-
-        if ($supervisor->userid) {
-            $user = $DB->get_record('user', ['id' => $supervisor->userid, 'deleted' => 0]);
-            if ($user) {
-                $username = fullname($user);
-            } else {
-                $username = get_string('error');
-            }
-        } else {
-            $username = get_string('notset', 'tool_mulib');
-        }
-        $mform->addElement('static', 'supuser', $supervisortitle, $username);
-
-        if ($supervisor->teamname !== null) {
-            $mform->addElement('static', 'stpteamname', get_string('team_name', 'tool_murelation'), s($supervisor->teamname));
-        }
-
-        if ($supervisor->teamidnumber !== null) {
-            $mform->addElement('static', 'stteamidnumber', get_string('team_idnumber', 'tool_murelation'), s($supervisor->teamidnumber));
-        }
+        $this->add_framework_details($framework);
+        $this->add_team_details($framework, $supervisor);
 
         if ($supervisor->maxsubordinates) {
             $current = $DB->count_records('tool_murelation_subordinate', ['supervisorid' => $supervisor->id]);
-            $max = "$current / $supervisor->maxsubordinates";
-            $mform->addElement('static', 'maxsubordinates', get_string('team_maxsubordinates', 'tool_murelation'), $max);
+            $max = $current . ' / ' . $supervisor->maxsubordinates;
+            $this->add(new info('maxsubordinates', get_string('team_maxsubordinates', 'tool_murelation'), $max, info::PLAIN));
         }
 
-        $mform->addElement('text', 'teamposition', get_string('team_position', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->setType('teamposition', PARAM_TEXT);
+        $this->add(new text('teamposition', get_string('team_position', 'tool_murelation'), ['maxlength' => 254]));
 
-        members_add_cohort_cohortid::add_element($mform, $this->wsarguments, 'cohortid', get_string('cohort', 'core_cohort'), $context);
-        $mform->addRule('cohortid', get_string('required'), 'required', null, 'client');
+        $cohortid = new autocomplete('cohortid', get_string('cohort', 'core_cohort'), new members_add_cohort_cohortid((int)$supervisor->id));
+        $cohortid->set_required(true);
+        $this->add($cohortid);
 
-        $this->add_action_buttons(true, get_string('members_add_cohort_a', 'tool_murelation', $subordinatestitle));
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        $context = $this->_customdata['context'];
-
-        $error = members_add_cohort_cohortid::validate_value($data['cohortid'], $this->wsarguments, $context);
-        if ($error !== null) {
-            $errors['cohortid'] = $error;
-        }
-
-        return $errors;
+        $label = get_string('members_add_cohort_a', 'tool_murelation', self::get_title($framework->subordinatestitle));
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', $label), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

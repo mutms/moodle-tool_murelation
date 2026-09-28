@@ -27,7 +27,7 @@
 
 use tool_murelation\local\framework;
 use tool_murelation\local\uimode_supervisors;
-use tool_murelation\external\form_autocomplete\subordinates_create_select_supuserid;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
@@ -35,7 +35,6 @@ use tool_murelation\external\form_autocomplete\subordinates_create_select_supuse
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
 
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -61,6 +60,9 @@ $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
 
 $framework = $DB->get_record('tool_murelation_framework', ['id' => $frameworkid], '*', MUST_EXIST);
+$title = get_string('subordinates_create_a', 'tool_murelation', format_string($framework->subordinatestitle));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 if ($framework->uimode != framework::UIMODE_SUPERVISORS) {
     redirect(new moodle_url('/admin/tool/murelation/management/framework.php', ['id' => $framework->id]));
 }
@@ -71,46 +73,47 @@ if (!uimode_supervisors::can_bulk_create($framework, $context)) {
     redirect($returnurl);
 }
 
+$handler = handler::from_request();
+$extra = ['framework' => $framework, 'tenantid' => $tenantid];
+
 if ($supuserid) {
-    $error = subordinates_create_select_supuserid::validate_value(
-        $supuserid,
-        ['frameworkid' => $framework->id, 'tenantid' => $tenantid],
-        $context,
-    );
-    if ($error !== null) {
+    // The supervisor comes from the URL of the second step, it must be a valid candidate.
+    $source = new \tool_murelation\muform\autocomplete\subordinates_create_select_supuserid($framework->id, (int)$tenantid);
+    if ($source->label((string)$supuserid) === null) {
         $supuserid = 0;
     }
 }
 
 if (!$supuserid) {
-    $form = new \tool_murelation\local\form\subordinates_create_select(
-        null,
-        ['framework' => $framework, 'tenantid' => $tenantid, 'context' => $context]
-    );
+    $form = new \tool_murelation\local\form\subordinates_create_select($currenturl, [], $extra);
     if ($form->is_cancelled()) {
-        $form->ajax_form_cancelled($returnurl);
+        $handler->cancelled($returnurl);
     }
     if ($data = $form->get_data()) {
-        $supuserid = $data->supuserid;
-        unset($form);
-    } else {
-        $form->ajax_form_render();
+        $nexturl = new moodle_url($currenturl, ['supuserid' => $data->supuserid]);
+        if ($handler->is_dialog()) {
+            // The dialog continues with the second step, the page gets it from the next URL.
+            $extra['supuser'] = $DB->get_record('user', ['id' => $data->supuserid, 'deleted' => 0, 'confirmed' => 1], '*', MUST_EXIST);
+            $handler->render(new \tool_murelation\local\form\subordinates_create($nexturl, [], $extra));
+        }
+        redirect($nexturl);
     }
+    $handler->render($form);
 }
 
-$supuser = $DB->get_record('user', ['id' => $supuserid, 'deleted' => 0, 'confirmed' => 1], '*', MUST_EXIST);
-
-$form = new \tool_murelation\local\form\subordinates_create(
-    null,
-    ['framework' => $framework, 'tenantid' => $tenantid, 'context' => $context, 'supuser' => $supuser]
-);
+$extra['supuser'] = $DB->get_record('user', ['id' => $supuserid, 'deleted' => 0, 'confirmed' => 1], '*', MUST_EXIST);
+$form = new \tool_murelation\local\form\subordinates_create(new moodle_url($currenturl, ['supuserid' => $supuserid]), [], $extra);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
-    $data->tenantid = $tenantid;
-    $supervisor = uimode_supervisors::bulk_create($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->cancelled($returnurl);
 }
 
-$form->ajax_form_render();
+if ($data = $form->get_data()) {
+    $data->frameworkid = $framework->id;
+    $data->supuserid = $supuserid;
+    $data->tenantid = $tenantid;
+    uimode_supervisors::bulk_create($data);
+    $handler->submitted($returnurl);
+}
+
+$handler->render($form);

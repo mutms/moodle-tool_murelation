@@ -71,8 +71,8 @@ $actions = new header_actions(get_string('management_framework_actions', 'tool_m
 
 if (uimode_teams::can_create_team($framework, $createcontext)) {
     $url = new \moodle_url('/admin/tool/murelation/management/team_create.php', ['frameworkid' => $framework->id]);
-    $button = new \tool_mulib\output\ajax_form\button($url, get_string('team_create', 'tool_murelation'));
-    $button->set_submitted_action($button::SUBMITTED_ACTION_REDIRECT);
+    $button = new \tool_mulib\output\muform\dialog\button($url, get_string('team_create', 'tool_murelation'));
+    $button->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
     $actions->add_button($button);
 }
 

@@ -25,14 +25,13 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -48,6 +47,9 @@ $framework = $DB->get_record('tool_murelation_framework', ['id' => $id], '*', MU
 $currenturl = new moodle_url('/admin/tool/murelation/management/framework_delete.php', ['id' => $framework->id]);
 $PAGE->set_context($syscontext);
 $PAGE->set_url($currenturl);
+$title = get_string('framework_delete', 'tool_murelation');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/index.php');
 
@@ -58,13 +60,15 @@ if (!framework::is_deletable($framework->id)) {
 
 $data = clone($framework);
 
-$form = new \tool_murelation\local\form\framework_delete(null, ['data' => $data]);
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\framework_delete($currenturl, [], ['framework' => $framework]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
-    framework::delete($data->id);
-    $form->ajax_form_submitted($returnurl);
+    framework::delete($framework->id);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

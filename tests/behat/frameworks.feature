@@ -44,14 +44,14 @@ Feature: Site managers can manage frameworks for user relations
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
 
     When I press "Add framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name      | Framework 1 |
-      | Supervisors         | 1           |
+      | uimode              | Supervisors |
       | Supervisor title    | Parent      |
       | Supervisors plural  | Parents     |
       | Subordinate title   | Child       |
       | Subordinates plural | Children    |
-    And I click on "Add framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 1" in the "Framework name" definition list item
     And I should see "Not set" in the "Framework ID" definition list item
     And I should see "Supervisors" in the "Framework mode" definition list item
@@ -67,21 +67,21 @@ Feature: Site managers can manage frameworks for user relations
 
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     When I press "Add framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name                  | Framework 2 |
       | Framework ID                    | fw2         |
-      | Supervisors                     | 1           |
-      | Description                     | Desc fw 2   |
+      | uimode                          | Supervisors |
+      | description                     | Desc fw 2   |
       | Positions visibility            | Everybody   |
-      | Management restricted to cohort | CH1         |
+      | Management restricted to cohort | Cohort 1    |
       | Supervisor title                | Rodic       |
       | Supervisors plural              | Rodice      |
-      | Supervisor candidates cohort    | CH2         |
+      | Supervisor candidates cohort    | Cohort 2    |
       | Supervisor role                 | UManager    |
       | Subordinate title               | Potomek     |
       | Subordinates plural             | Potomci     |
-      | Subordinate candidates cohort   | CH3         |
-    And I click on "Add framework" "button" in the ".modal-dialog" "css_element"
+      | Subordinate candidates cohort   | Cohort 3    |
+    And I click on "Add framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 2" in the "Framework name" definition list item
     And I should see "Desc fw 2"
     And I should see "fw2" in the "Framework ID" definition list item
@@ -98,21 +98,21 @@ Feature: Site managers can manage frameworks for user relations
 
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     When I press "Add framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name                  | Framework 3 |
       | Framework ID                    | fw3         |
-      | Teams                           | 1           |
-      | Description                     | Desc fw 3   |
+      | uimode                          | Teams       |
+      | description                     | Desc fw 3   |
       | Positions visibility            | Everybody   |
-      | Management restricted to cohort | CH1         |
+      | Management restricted to cohort | Cohort 1    |
       | Supervisor title                | Velitel     |
       | Supervisors plural              | Velitele    |
-      | Supervisor candidates cohort    | CH2         |
+      | Supervisor candidates cohort    | Cohort 2    |
       | Supervisor role                 | UManager    |
       | Subordinate title               | Pesak       |
       | Subordinates plural             | Pesaci      |
-      | Subordinate candidates cohort   | CH3         |
-    And I click on "Add framework" "button" in the ".modal-dialog" "css_element"
+      | Subordinate candidates cohort   | Cohort 3    |
+    And I click on "Add framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 3" in the "Framework name" definition list item
     And I should see "Desc fw 3"
     And I should see "fw3" in the "Framework ID" definition list item
@@ -137,27 +137,27 @@ Feature: Site managers can manage frameworks for user relations
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     And I follow "Framework 1"
     When I press "Update framework"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
+    And the following muform fields in the "dialog[open]" "css_element" match:
       | Framework name                  | Framework 1         |
       | Positions visibility            | Position managers   |
       | Supervisor title                | Ucitel              |
       | Supervisors plural              | Ucitele             |
       | Subordinate title               | Zak                 |
       | Subordinates plural             | Zaci                |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name                  | Framework 1x |
       | Framework ID                    | fw1x         |
-      | Description                     | Desc fw 1x   |
+      | description                     | Desc fw 1x   |
       | Positions visibility            | Everybody    |
-      | Management restricted to cohort | CH1          |
+      | Management restricted to cohort | Cohort 1     |
       | Supervisor title                | Parent       |
       | Supervisors plural              | Parents      |
-      | Supervisor candidates cohort    | CH2          |
+      | Supervisor candidates cohort    | Cohort 2     |
       | Supervisor role                 | UManager     |
       | Subordinate title               | Child        |
       | Subordinates plural             | Children     |
-      | Subordinate candidates cohort   | CH3          |
-    And I click on "Update framework" "button" in the ".modal-dialog" "css_element"
+      | Subordinate candidates cohort   | Cohort 3     |
+    And I click on "Update framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 1x" in the "Framework name" definition list item
     And I should see "Desc fw 1x"
     And I should see "fw1x" in the "Framework ID" definition list item
@@ -175,20 +175,20 @@ Feature: Site managers can manage frameworks for user relations
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     And I follow "Framework 2"
     When I press "Update framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name                  | Framework 2x      |
       | Framework ID                    | fw2x              |
-      | Description                     | Desc fw 2x        |
+      | description                     | Desc fw 2x        |
       | Positions visibility            | Position managers |
-      | Management restricted to cohort | CH1               |
+      | Management restricted to cohort | Cohort 1          |
       | Supervisor title                | Leader            |
       | Supervisors plural              | Leaders           |
-      | Supervisor candidates cohort    | CH2               |
+      | Supervisor candidates cohort    | Cohort 2          |
       | Supervisor role                 | UManager          |
       | Subordinate title               | Follower          |
       | Subordinates plural             | Followers         |
-      | Subordinate candidates cohort   | CH3               |
-    And I click on "Update framework" "button" in the ".modal-dialog" "css_element"
+      | Subordinate candidates cohort   | Cohort 3          |
+    And I click on "Update framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 2x" in the "Framework name" definition list item
     And I should see "Desc fw 2x"
     And I should see "fw2x" in the "Framework ID" definition list item
@@ -214,13 +214,13 @@ Feature: Site managers can manage frameworks for user relations
     And I follow "Framework 1"
 
     When I click on "Delete framework" action from "Framework actions" dropdown
-    And I click on "Delete framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete framework" "button" in the "dialog[open]" "css_element"
     Then I should not see "Framework 1"
     And I should see "Framework 2"
 
     And I follow "Framework 2"
     When I click on "Delete framework" action from "Framework actions" dropdown
-    And I click on "Delete framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete framework" "button" in the "dialog[open]" "css_element"
     Then I should see "No user relation frameworks found"
 
   Scenario: Framework viewer may see all user relation frameworks
@@ -280,14 +280,14 @@ Feature: Site managers can manage frameworks for user relations
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
 
     When I press "Add framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name      | Framework 1 |
-      | Supervisors         | 1           |
+      | uimode              | Supervisors |
       | Supervisor title    | Parent      |
       | Supervisors plural  | Parents     |
       | Subordinate title   | Child       |
       | Subordinates plural | Children    |
-    And I click on "Add framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 1" in the "Framework name" definition list item
     And I should see "Not set" in the "Framework ID" definition list item
     And I should see "Supervisors" in the "Framework mode" definition list item
@@ -305,16 +305,16 @@ Feature: Site managers can manage frameworks for user relations
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
 
     When I press "Add framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Framework name           | Framework 2        |
-      | Supervisors              | 1                  |
+      | uimode                   | Supervisors        |
       | Available in all tenants | 0                  |
       | Tenants                  | Tenant 1, Tenant 2 |
       | Supervisor title         | Parent             |
       | Supervisors plural       | Parents            |
       | Subordinate title        | Child              |
       | Subordinates plural      | Children           |
-    And I click on "Add framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 2" in the "Framework name" definition list item
     And I should see "Not set" in the "Framework ID" definition list item
     And I should see "Supervisors" in the "Framework mode" definition list item
@@ -331,10 +331,10 @@ Feature: Site managers can manage frameworks for user relations
     And I should see "Not set" in the "Subordinate candidates cohort" definition list item
 
     When I press "Update framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Available in all tenants | 0                  |
       | Tenants                  | Tenant 3           |
-    And I click on "Update framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 2" in the "Framework name" definition list item
     And I should see "No" in the "Available in all tenants" definition list item
     And I should see "Tenant 3" in the "Tenants" definition list item
@@ -342,9 +342,9 @@ Feature: Site managers can manage frameworks for user relations
     And I should not see "Tenant 2"
 
     When I press "Update framework"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Available in all tenants | 1                  |
-    And I click on "Update framework" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update framework" "button" in the "dialog[open]" "css_element"
     Then I should see "Framework 2" in the "Framework name" definition list item
     And I should see "Yes" in the "Available in all tenants" definition list item
     And I should not see "Tenant 1"

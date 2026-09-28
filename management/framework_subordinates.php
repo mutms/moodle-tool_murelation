@@ -61,7 +61,7 @@ $actions = new header_actions(get_string('management_team_actions', 'tool_murela
 if (uimode_supervisors::can_bulk_create($framework, $syscontext)) {
     $subordinatestitle = format_string($framework->subordinatestitle);
     $url = new \moodle_url('/admin/tool/murelation/management/subordinates_create.php', ['frameworkid' => $framework->id]);
-    $button = new \tool_mulib\output\ajax_form\button($url, get_string('subordinates_create_a', 'tool_murelation', $subordinatestitle));
+    $button = new \tool_mulib\output\muform\dialog\button($url, get_string('subordinates_create_a', 'tool_murelation', $subordinatestitle));
     $actions->add_button($button);
 }
 

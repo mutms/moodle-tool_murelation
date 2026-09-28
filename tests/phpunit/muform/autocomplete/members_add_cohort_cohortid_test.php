@@ -16,34 +16,81 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
-// phpcs:disable moodle.Commenting.DocblockDescription.Missing
 
-namespace tool_murelation\phpunit\external\form_autocomplete;
+namespace tool_murelation\phpunit\muform\autocomplete;
 
-use tool_murelation\external\form_autocomplete\members_add_cohort_cohortid;
+use tool_murelation\muform\autocomplete\members_add_cohort_cohortid;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
 
 /**
- * List of cohorts with subordinate candidates for team tests.
+ * Cohort with subordinate candidates for team autocomplete source tests.
  *
  * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
- * @coversDefaultClass \tool_murelation\external\form_autocomplete\members_add_cohort_cohortid
+ * @covers \tool_murelation\muform\autocomplete\members_add_cohort_cohortid
  */
 final class members_add_cohort_cohortid_test extends \advanced_testcase {
+    #[\Override]
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
 
-    /**
-     * @covers ::execute
-     */
-    public function test_execute(): void {
+    public function test_constructor(): void {
+        /** @var \tool_murelation_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
+
+        $syscontext = \context_system::instance();
+
+        $framework0 = $generator->create_framework(['uimode' => framework::UIMODE_SUPERVISORS]);
+        $framework1 = $generator->create_framework(['uimode' => framework::UIMODE_TEAMS]);
+
+        $manager = $this->getDataGenerator()->create_user();
+        $user0 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $roleid = create_role('man', 'man', 'man');
+        assign_capability('tool/murelation:viewpositions', CAP_ALLOW, $roleid, $syscontext->id);
+        assign_capability('tool/murelation:managepositions', CAP_ALLOW, $roleid, $syscontext->id);
+        role_assign($roleid, $manager->id, $syscontext);
+
+        $supervisor0 = \tool_murelation\local\uimode_supervisors::supervisor_edit((object)[
+            'frameworkid' => $framework0->id,
+            'userid' => $user0->id,
+            'subuserid' => $user1->id,
+        ]);
+        $supervisor1 = \tool_murelation\local\uimode_teams::team_create((object)[
+            'frameworkid' => $framework1->id,
+            'teamname' => 'Team 1',
+        ]);
+
+        $this->setUser($manager);
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame([(int)$supervisor1->id], $source->get_args());
+
+        try {
+            new members_add_cohort_cohortid((int)$supervisor0->id);
+            $this->fail('exception expected');
+        } catch (\core\exception\moodle_exception $ex) {
+            $this->assertInstanceOf(\invalid_parameter_exception::class, $ex);
+            $this->assertSame('Invalid parameter value detected (Framework is not compatible with Teams mode)', $ex->getMessage());
+        }
+
+        $this->setUser($user1);
+        try {
+            new members_add_cohort_cohortid((int)$supervisor1->id);
+            $this->fail('exception expected');
+        } catch (\core\exception\moodle_exception $ex) {
+            $this->assertInstanceOf(\invalid_parameter_exception::class, $ex);
+            $this->assertSame('Invalid parameter value detected (Cannot manage team members)', $ex->getMessage());
+        }
+    }
+
+    public function test_search(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
 
@@ -111,48 +158,27 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
 
         $this->setUser($admin);
 
-        $result = members_add_cohort_cohortid::execute('', $supervisor1->id);
-        $result = members_add_cohort_cohortid::clean_returnvalue(members_add_cohort_cohortid::execute_returns(), $result);
-        $this->assertSame(false, $result['overflow']);
-        $this->assertSame(50, $result['maxitems']);
-        $this->assertCount(3, $result['list']);
-        $this->assertEquals(['value' => $cohort0->id, 'label' => $cohort0->name], $result['list'][0]);
-        $this->assertEquals(['value' => $cohort1->id, 'label' => $cohort1->name], $result['list'][1]);
-        $this->assertEquals(['value' => $cohort2->id, 'label' => $cohort2->name], $result['list'][2]);
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame(50, $source->get_maxitems());
+        $this->assertSame([
+            (int)$cohort0->id => $cohort0->name,
+            (int)$cohort1->id => $cohort1->name,
+            (int)$cohort2->id => $cohort2->name,
+        ], $source->search('', 50));
 
         $this->setUser($manager);
 
-        $result = members_add_cohort_cohortid::execute('', $supervisor1->id);
-        $result = members_add_cohort_cohortid::clean_returnvalue(members_add_cohort_cohortid::execute_returns(), $result);
-        $this->assertSame(false, $result['overflow']);
-        $this->assertSame(50, $result['maxitems']);
-        $this->assertCount(2, $result['list']);
-        $this->assertEquals(['value' => $cohort0->id, 'label' => $cohort0->name], $result['list'][0]);
-        $this->assertEquals(['value' => $cohort1->id, 'label' => $cohort1->name], $result['list'][1]);
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame([
+            (int)$cohort0->id => $cohort0->name,
+            (int)$cohort1->id => $cohort1->name,
+        ], $source->search('', 50));
 
-        $result = members_add_cohort_cohortid::execute($cohort0->name, $supervisor1->id);
-        $result = members_add_cohort_cohortid::clean_returnvalue(members_add_cohort_cohortid::execute_returns(), $result);
-        $this->assertSame(false, $result['overflow']);
-        $this->assertSame(50, $result['maxitems']);
-        $this->assertCount(1, $result['list']);
-        $this->assertEquals(['value' => $cohort0->id, 'label' => $cohort0->name], $result['list'][0]);
+        $this->assertSame([
+            (int)$cohort0->id => $cohort0->name,
+        ], $source->search($cohort0->name, 50));
 
-        try {
-            members_add_cohort_cohortid::execute('', $supervisor0->id);
-            $this->fail('exception expected');
-        } catch (\core\exception\moodle_exception $ex) {
-            $this->assertInstanceOf(\invalid_parameter_exception::class, $ex);
-            $this->assertSame('Invalid parameter value detected (Framework is not compatible with Teams mode)', $ex->getMessage());
-        }
-
-        $this->setUser($user1);
-        try {
-            members_add_cohort_cohortid::execute('', $supervisor1->id);
-            $this->fail('exception expected');
-        } catch (\core\exception\moodle_exception $ex) {
-            $this->assertInstanceOf(\invalid_parameter_exception::class, $ex);
-            $this->assertSame('Invalid parameter value detected (Cannot manage team members)', $ex->getMessage());
-        }
+        $this->assertNull($source->search('', 1));
 
         if (!mulib::is_mutenancy_available()) {
             return;
@@ -172,13 +198,11 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
 
         $this->setUser($manager);
 
-        $result = members_add_cohort_cohortid::execute('', $supervisor1->id);
-        $result = members_add_cohort_cohortid::clean_returnvalue(members_add_cohort_cohortid::execute_returns(), $result);
-        $this->assertSame(false, $result['overflow']);
-        $this->assertSame(50, $result['maxitems']);
-        $this->assertCount(2, $result['list']);
-        $this->assertEquals(['value' => $cohort0->id, 'label' => $cohort0->name], $result['list'][0]);
-        $this->assertEquals(['value' => $cohort1->id, 'label' => $cohort1->name], $result['list'][1]);
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame([
+            (int)$cohort0->id => $cohort0->name,
+            (int)$cohort1->id => $cohort1->name,
+        ], $source->search('', 50));
 
         $supervisor4 = \tool_murelation\local\uimode_teams::team_create((object)[
             'frameworkid' => $framework1->id,
@@ -186,19 +210,14 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
             'tenantid' => $tenant1->id,
         ]);
 
-        $result = members_add_cohort_cohortid::execute('', $supervisor4->id);
-        $result = members_add_cohort_cohortid::clean_returnvalue(members_add_cohort_cohortid::execute_returns(), $result);
-        $this->assertSame(false, $result['overflow']);
-        $this->assertSame(50, $result['maxitems']);
-        $this->assertCount(3, $result['list']);
-        $this->assertEquals(['value' => $cohort0->id, 'label' => $cohort0->name], $result['list'][0]);
-        $this->assertEquals(['value' => $cohort1->id, 'label' => $cohort1->name], $result['list'][1]);
-        $this->assertEquals(['value' => $cohort3->id, 'label' => $cohort3->name], $result['list'][2]);
+        $source = new members_add_cohort_cohortid((int)$supervisor4->id);
+        $this->assertSame([
+            (int)$cohort0->id => $cohort0->name,
+            (int)$cohort1->id => $cohort1->name,
+            (int)$cohort3->id => $cohort3->name,
+        ], $source->search('', 50));
     }
 
-    /**
-     * @covers ::get_candidates
-     */
     public function test_get_candidates(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
@@ -291,6 +310,13 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
             members_add_cohort_cohortid::get_candidates($supervisor3->id, $cohort2->id)
         );
 
+        try {
+            members_add_cohort_cohortid::get_candidates($supervisor0->id, $cohort0->id);
+            $this->fail('exception expected');
+        } catch (\core\exception\moodle_exception $ex) {
+            $this->assertInstanceOf(\dml_missing_record_exception::class, $ex);
+        }
+
         if (!mulib::is_mutenancy_available()) {
             return;
         }
@@ -338,10 +364,91 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
         );
     }
 
-    /**
-     * @covers ::validate_value
-     */
-    public function test_validate_value(): void {
+    public function test_label(): void {
+        /** @var \tool_murelation_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
+
+        $category1 = $this->getDataGenerator()->create_category([]);
+        $category2 = $this->getDataGenerator()->create_category([]);
+
+        $syscontext = \context_system::instance();
+        $catcontext1 = \context_coursecat::instance($category1->id);
+        $catcontext2 = \context_coursecat::instance($category2->id);
+
+        $cohort0 = $this->getDataGenerator()->create_cohort(['visible' => 1]);
+        $cohort1 = $this->getDataGenerator()->create_cohort(['visible' => 1, 'contextid' => $catcontext1->id]);
+        $cohort2 = $this->getDataGenerator()->create_cohort(['visible' => 0, 'contextid' => $catcontext2->id]);
+
+        $framework1 = $generator->create_framework([
+            'uimode' => framework::UIMODE_TEAMS,
+        ]);
+
+        $admin = get_admin();
+        $manager = $this->getDataGenerator()->create_user();
+
+        $roleid = create_role('man', 'man', 'man');
+        assign_capability('tool/murelation:viewpositions', CAP_ALLOW, $roleid, $syscontext->id);
+        assign_capability('tool/murelation:managepositions', CAP_ALLOW, $roleid, $syscontext->id);
+
+        role_assign($roleid, $manager->id, $syscontext);
+
+        $supervisor1 = \tool_murelation\local\uimode_teams::team_create((object)[
+            'frameworkid' => $framework1->id,
+            'teamname' => 'Team 1',
+            'contextid' => $catcontext1->id,
+        ]);
+
+        $this->setUser($manager);
+
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame($cohort0->name, $source->label((string)$cohort0->id));
+        $this->assertSame($cohort1->name, $source->label((string)$cohort1->id));
+        $this->assertNull($source->label((string)$cohort2->id));
+        $this->assertNull($source->label('-10'));
+        $this->assertNull($source->label('0'));
+        $this->assertNull($source->label('999999'));
+        $this->assertNull($source->label('abc'));
+        $this->assertNull($source->label(''));
+
+        $this->setUser($admin);
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame($cohort2->name, $source->label((string)$cohort2->id));
+
+        if (!mulib::is_mutenancy_available()) {
+            return;
+        }
+        /** @var \tool_mutenancy_generator $tenantgenerator */
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_mutenancy');
+        \tool_mutenancy\local\tenancy::activate();
+
+        $tenant1 = $tenantgenerator->create_tenant();
+        $tenant2 = $tenantgenerator->create_tenant();
+        $tenantcatcontext1 = \context_coursecat::instance($tenant1->categoryid);
+        $tenantcatcontext2 = \context_coursecat::instance($tenant2->categoryid);
+
+        $cohort3 = $this->getDataGenerator()->create_cohort(['contextid' => $tenantcatcontext1->id]);
+        $cohort4 = $this->getDataGenerator()->create_cohort(['contextid' => $tenantcatcontext2->id]);
+
+        $supervisor4 = \tool_murelation\local\uimode_teams::team_create((object)[
+            'frameworkid' => $framework1->id,
+            'teamname' => 'Team 4',
+            'tenantid' => $tenant1->id,
+        ]);
+
+        $this->setUser($manager);
+
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame($cohort0->name, $source->label((string)$cohort0->id));
+        $this->assertNull($source->label((string)$cohort3->id));
+        $this->assertNull($source->label((string)$cohort4->id));
+
+        $source = new members_add_cohort_cohortid((int)$supervisor4->id);
+        $this->assertSame($cohort0->name, $source->label((string)$cohort0->id));
+        $this->assertSame($cohort3->name, $source->label((string)$cohort3->id));
+        $this->assertNull($source->label((string)$cohort4->id));
+    }
+
+    public function test_validate(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
 
@@ -408,20 +515,26 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
 
         $this->setUser($manager);
 
-        $this->assertSame(null, members_add_cohort_cohortid::validate_value($cohort0->id, ['supervisorid' => $supervisor1->id], $syscontext));
-        $this->assertSame('No subordinates found', members_add_cohort_cohortid::validate_value($cohort1->id, ['supervisorid' => $supervisor1->id], $syscontext));
-        $this->assertSame('Error', members_add_cohort_cohortid::validate_value($cohort2->id, ['supervisorid' => $supervisor1->id], $syscontext));
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertNotNull($source->label((string)$cohort0->id));
+        $this->assertNull($source->validate((string)$cohort0->id));
+        $this->assertNotNull($source->label((string)$cohort1->id));
+        $this->assertSame('No subordinates found', $source->validate((string)$cohort1->id));
+        // Hidden cohort is not allowed for manager without cohort view capability.
+        $this->assertNull($source->label((string)$cohort2->id));
 
         $supervisor1 = \tool_murelation\local\supervisor::update((object)[
             'id' => $supervisor1->id,
             'maxsubordinates' => 2,
         ]);
-        $this->assertSame('Subordinates limit reached', members_add_cohort_cohortid::validate_value($cohort0->id, ['supervisorid' => $supervisor1->id], $syscontext));
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertSame('Subordinates limit reached', $source->validate((string)$cohort0->id));
         $supervisor1 = \tool_murelation\local\supervisor::update((object)[
             'id' => $supervisor1->id,
             'maxsubordinates' => 3,
         ]);
-        $this->assertSame(null, members_add_cohort_cohortid::validate_value($cohort0->id, ['supervisorid' => $supervisor1->id], $syscontext));
+        $source = new members_add_cohort_cohortid((int)$supervisor1->id);
+        $this->assertNull($source->validate((string)$cohort0->id));
 
         if (!mulib::is_mutenancy_available()) {
             return;
@@ -456,37 +569,24 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
 
         $this->setUser($manager);
 
-        $this->assertSame('No subordinates found', members_add_cohort_cohortid::validate_value(
-            $cohort1->id,
-            ['supervisorid' => $supervisor4->id],
-            $syscontext
-        ));
+        $source4 = new members_add_cohort_cohortid((int)$supervisor4->id);
+        $source5 = new members_add_cohort_cohortid((int)$supervisor5->id);
+
+        $this->assertSame('No subordinates found', $source4->validate((string)$cohort1->id));
 
         cohort_add_member($cohort1->id, $tuser1->id);
         cohort_add_member($cohort1->id, $tuser2->id);
         cohort_add_member($cohort3->id, $tuser1->id);
         cohort_add_member($cohort4->id, $tuser2->id);
 
-        $this->assertSame(null, members_add_cohort_cohortid::validate_value(
-            $cohort1->id,
-            ['supervisorid' => $supervisor4->id],
-            $tenantcatcontext1
-        ));
-        $this->assertSame(null, members_add_cohort_cohortid::validate_value(
-            $cohort1->id,
-            ['supervisorid' => $supervisor5->id],
-            $tenantcatcontext2
-        ));
+        $this->assertNotNull($source4->label((string)$cohort1->id));
+        $this->assertNull($source4->validate((string)$cohort1->id));
+        $this->assertNotNull($source5->label((string)$cohort1->id));
+        $this->assertNull($source5->validate((string)$cohort1->id));
 
-        $this->assertSame(null, members_add_cohort_cohortid::validate_value(
-            $cohort3->id,
-            ['supervisorid' => $supervisor4->id],
-            $tenantcatcontext1
-        ));
-        $this->assertSame('No subordinates found', members_add_cohort_cohortid::validate_value(
-            $cohort3->id,
-            ['supervisorid' => $supervisor5->id],
-            $tenantcatcontext2
-        ));
+        $this->assertNotNull($source4->label((string)$cohort3->id));
+        $this->assertNull($source4->validate((string)$cohort3->id));
+        $this->assertNull($source5->label((string)$cohort3->id));
+        $this->assertSame('No subordinates found', $source5->validate((string)$cohort3->id));
     }
 }

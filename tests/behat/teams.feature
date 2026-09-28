@@ -70,9 +70,9 @@ Feature: Teams management
     And I follow "Teams"
 
     When I press "Create team"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team name | Team One |
-    And I click on "Create team" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamname | Team One |
+    And I click on "Create team" "button" in the "dialog[open]" "css_element"
     Then I should see "Team One" in the "Team name" definition list item
     And I should see "Not set" in the "Teacher" definition list item
     And I should see "No" in the "Supervisor-managed team" definition list item
@@ -81,16 +81,16 @@ Feature: Teams management
     And I am on the "Framework 2" "tool_murelation > Framework" page
     And I follow "Teams"
     When I press "Create team"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team name               | Team Two                                  |
-      | Team ID number          | team2                                     |
-      | Teacher                 | teacher 2                                 |
-      | Supervisor-managed team | 1                                         |
-      | Max team members        | 10                                        |
-      | Students                | student1@example.com,student2@example.com |
-      | Create team cohort      | 1                                         |
-      | Team cohort name        | Team cohort 2                             |
-    And I click on "Create team" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamname         | Team Two             |
+      | teamidnumber     | team2                |
+      | userid           | Teacher 2            |
+      | supmanaged       | 1                    |
+      | maxsubordinates  | 10                   |
+      | subuserids       | Student 1, Student 2 |
+      | teamcohortcreate | 1                    |
+      | teamcohortname   | Team cohort 2        |
+    And I click on "Create team" "button" in the "dialog[open]" "css_element"
     Then I should see "Team Two" in the "Team name" definition list item
     And I should see "team2" in the "Team ID number" definition list item
     And I should see "Teacher 2" in the "Teacher" definition list item
@@ -104,20 +104,20 @@ Feature: Teams management
 
     When I click on "Team actions" "link_or_button"
     And I click on "Update team" "link"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
-      | Team name               | Team Two                                  |
-      | Team ID number          | team2                                     |
-      | Supervisor-managed team | 1                                         |
-      | Max team members        | 10                                        |
-      | Team cohort name        | Team cohort 2                             |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team name               | Team B                                    |
-      | Team ID number          | teamb                                     |
-      | Teacher                 | Teacher 1                                 |
-      | Supervisor-managed team | 0                                         |
-      | Max team members        | 11                                        |
-      | Team cohort name        | Team cohort B                             |
-    And I click on "Update team" "button" in the ".modal-dialog" "css_element"
+    And the following muform fields in the "dialog[open]" "css_element" match:
+      | teamname        | Team Two      |
+      | teamidnumber    | team2         |
+      | supmanaged      | 1             |
+      | maxsubordinates | 10            |
+      | teamcohortname  | Team cohort 2 |
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamname        | Team B        |
+      | teamidnumber    | teamb         |
+      | userid          | Teacher 1     |
+      | supmanaged      | 0             |
+      | maxsubordinates | 11            |
+      | teamcohortname  | Team cohort B |
+    And I click on "Update team" "button" in the "dialog[open]" "css_element"
     Then I should see "Team B" in the "Team name" definition list item
     And I should see "teamb" in the "Team ID number" definition list item
     And I should see "Teacher 1" in the "Teacher" definition list item
@@ -126,9 +126,9 @@ Feature: Teams management
     And I should see "Team cohort B" in the "Team cohort" definition list item
 
     When I press "Add Students"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Users | student3@example.com |
-    And I click on "Add Students" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | subuserids | Student 3 |
+    And I click on "Add Students" "button" in the "dialog[open]" "css_element"
     Then I should see "3 / 11" in the "Max team members" definition list item
     And the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Team position |
@@ -137,10 +137,10 @@ Feature: Teams management
       | Student 3  | student3@example.com |               |
 
     When I press "Add Students"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team position | helper                                    |
-      | Users         | student4@example.com,student5@example.com |
-    And I click on "Add Students" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamposition | helper               |
+      | subuserids   | Student 4, Student 5 |
+    And I click on "Add Students" "button" in the "dialog[open]" "css_element"
     Then I should see "5 / 11" in the "Max team members" definition list item
     And the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Team position |
@@ -152,9 +152,9 @@ Feature: Teams management
 
     When I click on "Actions" "link_or_button" in the "Student 4" "table_row"
     And I click on "Update Student" "link" in the "Student 4" "table_row"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team position | leader |
-    And I click on "Update Student" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamposition | leader |
+    And I click on "Update Student" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Team position |
       | Student 1  | student1@example.com |               |
@@ -165,7 +165,7 @@ Feature: Teams management
 
     When I click on "Actions" "link_or_button" in the "Student 5" "table_row"
     And I click on "Remove Student" "link" in the "Student 5" "table_row"
-    And I click on "Remove Student" "button" in the ".modal-dialog" "css_element"
+    And I click on "Remove Student" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Team position |
       | Student 1  | student1@example.com |               |
@@ -176,9 +176,9 @@ Feature: Teams management
 
     When I click on "Team actions" "link_or_button"
     And I click on "Delete team" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Tick the checkbox | 1 |
-    And I click on "Delete team" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | confirm | 1 |
+    And I click on "Delete team" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | Team name | Team ID number        | Supervisor-managed team |
       | Team One  |                       | No                      |
@@ -231,19 +231,19 @@ Feature: Teams management
     And I follow "Team One"
 
     When I press "Add Zaci"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Users | Student 1,Student 2 |
-    And I click on "Add Zaci" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | subuserids | Student 1, Student 2 |
+    And I click on "Add Zaci" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Team position |
       | Student 1  |               |
       | Student 2  |               |
 
     When I press "Add Zaci"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Users         | Student 3 |
-      | Team position | leader    |
-    And I click on "Add Zaci" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | subuserids   | Student 3 |
+      | teamposition | leader    |
+    And I click on "Add Zaci" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Team position |
       | Student 1  |               |
@@ -252,9 +252,9 @@ Feature: Teams management
 
     When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
     And I click on "Update Zak" "link" in the "Student 1" "table_row"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team position | subleader |
-    And I click on "Update Zak" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamposition | subleader |
+    And I click on "Update Zak" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Team position |
       | Student 1  | subleader     |
@@ -263,7 +263,7 @@ Feature: Teams management
 
     When I click on "Actions" "link_or_button" in the "Student 3" "table_row"
     And I click on "Remove Zak" "link" in the "Student 3" "table_row"
-    And I click on "Remove Zak" "button" in the ".modal-dialog" "css_element"
+    And I click on "Remove Zak" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Team position |
       | Student 1  | subleader     |
@@ -278,16 +278,16 @@ Feature: Teams management
     And I am on the "Framework 1" "tool_murelation > Framework" page
     And I follow "Teams"
     And I press "Create team"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team name | Team One |
-    And I click on "Create team" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamname | Team One |
+    And I click on "Create team" "button" in the "dialog[open]" "css_element"
 
     When I click on "Team actions" "link_or_button"
     And I click on "Add from cohort" "link"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
-      | Team position | xyz      |
-      | Cohort        | Cohort 3 |
-    And I click on "Add from cohort" "button" in the ".modal-dialog" "css_element"
+    And I set the following muform fields in the "dialog[open]" "css_element":
+      | teamposition | xyz      |
+      | cohortid     | Cohort 3 |
+    And I click on "Add from cohort" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Team position |
       | Student 1  | student1@example.com | xyz           |

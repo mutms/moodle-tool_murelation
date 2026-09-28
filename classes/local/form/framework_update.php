@@ -19,10 +19,21 @@
 
 namespace tool_murelation\local\form;
 
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\autocompletemany;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\editor;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\section;
+use tool_mulib\muform\element\select;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\form;
 use tool_murelation\local\framework;
-use tool_murelation\external\form_autocomplete\framework_cohortid;
-use tool_murelation\external\form_autocomplete\framework_tenantids;
-use tool_murelation\local\util;
+use tool_murelation\muform\autocomplete\framework_cohortid;
+use tool_murelation\muform\autocompletemany\framework_tenantids;
 
 /**
  * Update relation framework.
@@ -31,141 +42,81 @@ use tool_murelation\local\util;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class framework_update extends \tool_mulib\local\ajax_form {
+final class framework_update extends form {
     #[\Override]
-    protected function definition() {
-        global $DB;
-        $mform = $this->_form;
-        $framework = $this->_customdata['data'];
-        $editoroptions = $this->_customdata['editoroptions'];
-        $context = \context_system::instance();
+    protected function definition(): void {
+        $current = $this->get_current_data();
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+        $name = new text('name', get_string('framework_name', 'tool_murelation'), ['maxlength' => 254]);
+        $name->set_required(true);
+        $this->add($name);
 
-        $mform->addElement('text', 'name', get_string('framework_name', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->addRule('name', get_string('required'), 'required', null, 'client');
-        $mform->setType('name', PARAM_TEXT);
-
-        $mform->addElement('text', 'idnumber', get_string('framework_idnumber', 'tool_murelation'), 'maxlength="100" size="50"');
-        $mform->setType('idnumber', PARAM_RAW); // Idnumbers are plain text.
+        $this->add(new text('idnumber', get_string('framework_idnumber', 'tool_murelation'), ['type' => 'rawtext', 'maxlength' => 100]));
 
         $uimodes = framework::get_uimodes();
-        $mform->addElement('static', 'staticuimode', get_string('framework_uimode', 'tool_murelation'), $uimodes[$framework->uimode]);
+        $this->add(new info('staticuimode', get_string('framework_uimode', 'tool_murelation'), $uimodes[$current['uimode']], info::PLAIN));
 
-        $mform->addElement('editor', 'description_editor', get_string('description'), ['rows' => 10], $editoroptions);
-        $mform->setType('description_editor', PARAM_RAW);
+        $this->add(new editor('description', get_string('description')));
 
-        $options = framework::get_visibility_options();
-        $mform->addElement('select', 'visibility', get_string('framework_visibility', 'tool_murelation'), $options);
+        $this->add(new select('visibility', get_string('framework_visibility', 'tool_murelation'), array_map('strval', framework::get_visibility_options())));
 
-        framework_cohortid::add_element(
-            $mform,
-            ['currentValue' => $framework->managecohortid],
-            'managecohortid',
-            get_string('framework_managecohort', 'tool_murelation'),
-            $context
-        );
-        $mform->setType('managecohortid', PARAM_INT);
+        $source = new framework_cohortid((int)($current['managecohortid'] ?? 0));
+        $this->add(new autocomplete('managecohortid', get_string('framework_managecohort', 'tool_murelation'), $source));
 
         if (\tool_mulib\local\mulib::is_mutenancy_active()) {
-            $mform->addElement('advcheckbox', 'alltenants', get_string('framework_alltenants', 'tool_murelation'));
-            framework_tenantids::add_element(
-                $mform,
-                [],
-                'tenantids',
-                get_string('tenants', 'tool_mutenancy'),
-                $context
-            );
-            $mform->hideIf('tenantids', 'alltenants', 'checked');
-            $mform->setDefault('tenantids', $DB->get_fieldset('tool_murelation_tenant_allow', 'tenantid', ['frameworkid' => $framework->id]));
+            $this->add(new checkbox('alltenants', get_string('framework_alltenants', 'tool_murelation')));
+            $this->add(new autocompletemany('tenantids', get_string('tenants', 'tool_mutenancy'), new framework_tenantids()));
+            $this->get_display_manager()->hide_if('tenantids', 'alltenants', 'checked');
         }
 
-        $mform->addElement('header', 'supervisorheader', get_string('supervisor', 'tool_murelation'));
+        $this->add(new section('supervisorheader', get_string('supervisor', 'tool_murelation')));
 
-        $mform->addElement('text', 'supervisortitle', get_string('supervisortitle', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->addRule('supervisortitle', get_string('required'), 'required', null, 'client');
-        $mform->setType('supervisortitle', PARAM_TEXT);
+        $supervisortitle = new text('supervisortitle', get_string('supervisortitle', 'tool_murelation'), ['maxlength' => 254]);
+        $supervisortitle->set_required(true);
+        $this->add($supervisortitle, 'supervisorheader');
 
-        $mform->addElement('text', 'supervisorstitle', get_string('supervisorstitle', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->addRule('supervisorstitle', get_string('required'), 'required', null, 'client');
-        $mform->setType('supervisorstitle', PARAM_TEXT);
+        $supervisorstitle = new text('supervisorstitle', get_string('supervisorstitle', 'tool_murelation'), ['maxlength' => 254]);
+        $supervisorstitle->set_required(true);
+        $this->add($supervisorstitle, 'supervisorheader');
 
-        framework_cohortid::add_element(
-            $mform,
-            ['currentValue' => $framework->supervisorcohortid],
-            'supervisorcohortid',
-            get_string('framework_supervisorcohort', 'tool_murelation'),
-            $context
-        );
-        $mform->setType('supervisorcohortid', PARAM_INT);
+        $source = new framework_cohortid((int)($current['supervisorcohortid'] ?? 0));
+        $this->add(new autocomplete('supervisorcohortid', get_string('framework_supervisorcohort', 'tool_murelation'), $source), 'supervisorheader');
 
-        $roles = \tool_murelation\local\framework::get_allowed_supervisor_roles($framework->supervisorroleid);
+        $roles = framework::get_allowed_supervisor_roles(empty($current['supervisorroleid']) ? null : (int)$current['supervisorroleid']);
         if ($roles) {
-            $roles = ['' => get_string('choosedots')] + $roles;
-            $mform->addElement('select', 'supervisorroleid', get_string('framework_supervisorrole', 'tool_murelation'), $roles);
+            $roles = ['' => get_string('choosedots')] + array_map('strval', $roles);
+            $this->add(new select('supervisorroleid', get_string('framework_supervisorrole', 'tool_murelation'), $roles), 'supervisorheader');
         }
 
-        $mform->addElement('header', 'subordinateheader', get_string('subordinate', 'tool_murelation'));
+        $this->add(new section('subordinateheader', get_string('subordinate', 'tool_murelation')));
 
-        $mform->addElement('text', 'subordinatetitle', get_string('subordinatetitle', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->addRule('subordinatetitle', get_string('required'), 'required', null, 'client');
-        $mform->setType('subordinatetitle', PARAM_TEXT);
+        $subordinatetitle = new text('subordinatetitle', get_string('subordinatetitle', 'tool_murelation'), ['maxlength' => 254]);
+        $subordinatetitle->set_required(true);
+        $this->add($subordinatetitle, 'subordinateheader');
 
-        $mform->addElement('text', 'subordinatestitle', get_string('subordinatestitle', 'tool_murelation'), 'maxlength="254" size="50"');
-        $mform->addRule('subordinatestitle', get_string('required'), 'required', null, 'client');
-        $mform->setType('subordinatestitle', PARAM_TEXT);
+        $subordinatestitle = new text('subordinatestitle', get_string('subordinatestitle', 'tool_murelation'), ['maxlength' => 254]);
+        $subordinatestitle->set_required(true);
+        $this->add($subordinatestitle, 'subordinateheader');
 
-        framework_cohortid::add_element(
-            $mform,
-            ['currentValue' => $framework->subordinatecohortid],
-            'subordinatecohortid',
-            get_string('framework_subordinatecohort', 'tool_murelation'),
-            $context
-        );
-        $mform->setType('subordinatecohortid', PARAM_INT);
+        $source = new framework_cohortid((int)($current['subordinatecohortid'] ?? 0));
+        $this->add(new autocomplete('subordinatecohortid', get_string('framework_subordinatecohort', 'tool_murelation'), $source), 'subordinateheader');
 
-        $this->add_action_buttons(true, get_string('framework_update', 'tool_murelation'));
-
-        $this->set_data($framework);
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('framework_update', 'tool_murelation')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 
     #[\Override]
-    public function validation($data, $files) {
+    protected function validation(array $data, array &$allerrors): void {
         global $DB;
-        $errors = parent::validation($data, $files);
-        $framework = $this->_customdata['data'];
-        $context = \context_system::instance();
-
-        if (trim($data['idnumber']) !== $data['idnumber']) {
-            $errors['idnumber'] = get_string('error');
-        } else if ($data['idnumber'] !== '') {
-            if ($DB->record_exists_select('tool_murelation_framework', "LOWER(idnumber) = LOWER(?) AND id <> ?", [$data['idnumber'], $data['id']])) {
-                $errors['idnumber'] = get_string('error');
+        $idnumber = $data['idnumber'];
+        if (trim($idnumber) !== $idnumber) {
+            $allerrors['idnumber'][] = get_string('error');
+        } else if ($idnumber !== '') {
+            $select = "LOWER(idnumber) = LOWER(?) AND id <> ?";
+            if ($DB->record_exists_select('tool_murelation_framework', $select, [$idnumber, $this->get_current_data()['id']])) {
+                $allerrors['idnumber'][] = get_string('error');
             }
         }
-
-        foreach (['managecohortid', 'supervisorcohortid', 'subordinatecohortid'] as $field) {
-            if (!$data[$field]) {
-                continue;
-            }
-            $args = ['currentValue' => $framework->$field];
-            $error = framework_cohortid::validate_value($data[$field], $args, $context);
-            if ($error !== null) {
-                $errors[$field] = $error;
-            }
-        }
-
-        if (!empty($data['tenantids'])) {
-            foreach ($data['tenantids'] as $tenantid) {
-                $error = framework_tenantids::validate_value($tenantid, [], $context);
-                if ($error !== null) {
-                    $errors[$field] = $error;
-                    break;
-                }
-            }
-        }
-
-        return $errors;
     }
 }

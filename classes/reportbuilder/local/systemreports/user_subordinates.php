@@ -147,7 +147,7 @@ final class user_subordinates extends system_report {
         }
 
         $url = new moodle_url('/admin/tool/murelation/management/supervisor_edit.php', ['subuserid' => ':userid', 'frameworkid' => ':frameworkid']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('supervisor_update', 'tool_murelation'), 'i/settings');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('supervisor_update', 'tool_murelation'), 'i/settings');
         $this->add_action($link->create_report_action()
             ->add_callback(static function (\stdclass $row): bool {
                 global $DB, $USER;
@@ -172,7 +172,7 @@ final class user_subordinates extends system_report {
             }));
 
         $url = new moodle_url('/admin/tool/murelation/management/supervisor_delete.php', ['subuserid' => ':userid', 'frameworkid' => ':frameworkid']);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('supervisor_delete', 'tool_murelation'), 'i/delete');
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('supervisor_delete', 'tool_murelation'), 'i/delete');
         $this->add_action($link->create_report_action(['class' => 'text-danger'])
             ->add_callback(static function (\stdclass $row): bool {
                 global $DB, $USER;

@@ -95,25 +95,25 @@ if (uimode_teams::can_manage_members($framework, $supervisor)) {
     }
     if (!$limitreached) {
         $url = new \moodle_url('/admin/tool/murelation/management/members_create.php', ['supervisorid' => $supervisor->id]);
-        $button = new \tool_mulib\output\ajax_form\button($url, get_string('members_create_a', 'tool_murelation', $subordinatestitle));
+        $button = new \tool_mulib\output\muform\dialog\button($url, get_string('members_create_a', 'tool_murelation', $subordinatestitle));
         $actions->add_button($button);
 
         $url = new \moodle_url('/admin/tool/murelation/management/members_add_cohort.php', ['supervisorid' => $supervisor->id]);
-        $link = new \tool_mulib\output\ajax_form\link($url, get_string('members_add_cohort_a', 'tool_murelation', $subordinatestitle), 'i/users');
-        $actions->get_dropdown()->add_ajax_form($link);
+        $link = new \tool_mulib\output\muform\dialog\link($url, get_string('members_add_cohort_a', 'tool_murelation', $subordinatestitle), 'i/users');
+        $actions->get_dropdown()->add_dialog($link);
     }
 }
 
 if (uimode_teams::can_update_team($framework, $supervisor)) {
     $url = new \moodle_url('/admin/tool/murelation/management/team_update.php', ['id' => $supervisor->id]);
-    $link = new \tool_mulib\output\ajax_form\link($url, get_string('team_update', 'tool_murelation'), 'i/settings');
-    $actions->get_dropdown()->add_ajax_form($link);
+    $link = new \tool_mulib\output\muform\dialog\link($url, get_string('team_update', 'tool_murelation'), 'i/settings');
+    $actions->get_dropdown()->add_dialog($link);
 
     $url = new \moodle_url('/admin/tool/murelation/management/team_delete.php', ['id' => $supervisor->id]);
-    $link = new \tool_mulib\output\ajax_form\link($url, get_string('team_delete', 'tool_murelation'), 'i/delete');
+    $link = new \tool_mulib\output\muform\dialog\link($url, get_string('team_delete', 'tool_murelation'), 'i/delete');
     $link->add_class('text-danger');
-    $link->set_submitted_action($link::SUBMITTED_ACTION_REDIRECT);
-    $actions->get_dropdown()->add_ajax_form($link);
+    $link->set_submitted_action(\tool_mulib\muform\handler\dialog::ACTION_REDIRECT);
+    $actions->get_dropdown()->add_dialog($link);
 }
 
 if ($actions->has_items()) {

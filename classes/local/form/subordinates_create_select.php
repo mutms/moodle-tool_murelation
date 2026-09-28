@@ -19,7 +19,12 @@
 
 namespace tool_murelation\local\form;
 
-use tool_murelation\external\form_autocomplete\subordinates_create_select_supuserid;
+use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+use tool_murelation\muform\autocomplete\subordinates_create_select_supuserid;
 
 /**
  * Supervisor selection for bulk creation of subordinates.
@@ -28,54 +33,24 @@ use tool_murelation\external\form_autocomplete\subordinates_create_select_supuse
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class subordinates_create_select extends \tool_mulib\local\ajax_form {
-    /** @var array */
-    protected $wsarguments;
+final class subordinates_create_select extends form {
+    use details_trait;
 
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $framework = $this->_customdata['framework'];
-        $tenantid = $this->_customdata['tenantid'];
-        $context = $this->_customdata['context'];
-        $this->wsarguments = ['frameworkid' => $framework->id, 'tenantid' => $tenantid];
+    protected function definition(): void {
+        $framework = $this->get_extra_data()['framework'];
+        $tenantid = $this->get_extra_data()['tenantid'];
 
-        $supervisortitle = format_string($framework->supervisortitle);
+        $this->add_framework_details($framework);
+        $this->add_tenant_details($tenantid);
 
-        $mform->addElement('hidden', 'frameworkid');
-        $mform->setType('frameworkid', PARAM_INT);
-        $mform->setDefault('frameworkid', $framework->id);
+        $source = new subordinates_create_select_supuserid((int)$framework->id, (int)$tenantid);
+        $supuserid = new autocomplete('supuserid', self::get_title($framework->supervisortitle), $source);
+        $supuserid->set_required(true);
+        $this->add($supuserid);
 
-        $mform->addElement('static', 'fwname', get_string('framework_name', 'tool_murelation'), format_string($framework->name));
-        if ($framework->idnumber !== null) {
-            $mform->addElement('static', 'fwidnumber', get_string('framework_idnumber', 'tool_murelation'), s($framework->idnumber));
-        }
-
-        if (\tool_mulib\local\mulib::is_mutenancy_active() && $tenantid) {
-            $tenant = \tool_mutenancy\local\tenant::fetch($tenantid);
-            $mform->addElement('static', 'tenant', get_string('tenant', 'tool_mutenancy'), format_string($tenant->name));
-        }
-
-        subordinates_create_select_supuserid::add_element($mform, $this->wsarguments, 'supuserid', $supervisortitle, $context);
-        $mform->addRule('supuserid', get_string('required'), 'required', null, 'client');
-
-        $this->add_action_buttons(true, get_string('continue'));
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        $context = $this->_customdata['context'];
-
-        if ($data['subuserid']) {
-            $error = subordinates_create_select_supuserid::validate_value($data['subuserid'], $this->wsarguments, $context);
-            if ($error !== null) {
-                $errors['subuserid'] = $error;
-            }
-        } else {
-            $errors['subuserid'] = get_string('required');
-        }
-
-        return $errors;
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('continue')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

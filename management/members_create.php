@@ -25,8 +25,9 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_murelation\local\subordinate;
+use tool_mulib\muform\handler;
 use tool_murelation\local\framework;
+use tool_murelation\local\subordinate;
 use tool_murelation\local\uimode_teams;
 
 /** @var moodle_database $DB */
@@ -34,8 +35,6 @@ use tool_murelation\local\uimode_teams;
 /** @var core_renderer $OUTPUT */
 /** @var stdClass $CFG */
 /** @var stdClass $USER */
-
-define('AJAX_SCRIPT', true);
 
 require('../../../../config.php');
 
@@ -53,6 +52,9 @@ $context = uimode_teams::get_team_context($framework, $supervisor);
 $currenturl = new moodle_url('/admin/tool/murelation/management/members_create.php', ['supervisorid' => $supervisorid]);
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('members_create_a', 'tool_murelation', format_string($framework->subordinatestitle));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 $returnurl = new moodle_url('/admin/tool/murelation/management/team.php', ['id' => $supervisor->id]);
 
@@ -60,16 +62,16 @@ if (!uimode_teams::can_manage_members($framework, $supervisor)) {
     redirect($returnurl);
 }
 
-$form = new \tool_murelation\local\form\members_create(
-    null,
-    ['supervisor' => $supervisor, 'framework' => $framework, 'context' => $context]
-);
+$handler = handler::from_request();
+
+$form = new \tool_murelation\local\form\members_create($currenturl, [], ['supervisor' => $supervisor, 'framework' => $framework]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
+    $data->supervisorid = $supervisor->id;
     uimode_teams::members_create($data);
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);
