@@ -204,14 +204,7 @@ class renderer extends \plugin_renderer_base {
         if ($supervisor->teamcohortid) {
             $cohort = $DB->get_record('cohort', ['id' => $supervisor->teamcohortid]);
             if ($cohort) {
-                $cohortname = format_string($cohort->name);
-                $cohortcontext = \context::instance_by_id($cohort->contextid);
-                if (has_capability('moodle/cohort:view', $cohortcontext)) {
-                    $cohortname = \html_writer::link(
-                        new moodle_url('/cohort/index.php', ['contextid' => $cohortcontext->id]),
-                        $cohortname
-                    );
-                }
+                $cohortname = \tool_mulib\local\cohort_util::format_cohort_name($cohort);
             } else {
                 $cohortname = get_string('error');
             }

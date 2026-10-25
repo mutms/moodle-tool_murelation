@@ -31,4 +31,8 @@ $callbacks = [
         'hook' => \tool_mutenancy\hook\tenant_manager_capabilities::class,
         'callback' => [\tool_murelation\local\management::class, 'callback_tenant_manager_capabilities'],
     ],
+    [
+        'hook' => \tool_mucohort\hook\cohort_owner::class,
+        'callback' => [\tool_murelation\local\management::class, 'callback_mucohort_cohort_owner'],
+    ],
 ];

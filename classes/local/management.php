@@ -41,6 +41,34 @@ final class management {
     }
 
     /**
+     * Hook callback describing team cohorts in advanced cohort management.
+     *
+     * @param \tool_mucohort\hook\cohort_owner $hook
+     */
+    public static function callback_mucohort_cohort_owner(\tool_mucohort\hook\cohort_owner $hook): void {
+        global $DB;
+
+        $cohort = $hook->get_cohort();
+        if ($cohort->component !== 'tool_murelation') {
+            return;
+        }
+        $supervisor = $DB->get_record('tool_murelation_supervisor', ['teamcohortid' => $cohort->id], '*', IGNORE_MULTIPLE);
+        if (!$supervisor) {
+            return;
+        }
+        $framework = $DB->get_record('tool_murelation_framework', ['id' => $supervisor->frameworkid], '*', MUST_EXIST);
+        $url = null;
+        if ($framework->uimode == framework::UIMODE_TEAMS) {
+            $context = uimode_teams::get_team_context($framework, $supervisor);
+            if (has_capability('tool/murelation:viewpositions', $context)) {
+                $url = new moodle_url('/admin/tool/murelation/management/team.php', ['id' => $supervisor->id]);
+            }
+        }
+        $name = format_string($supervisor->teamname, true, ['context' => \context_system::instance(), 'escape' => false]);
+        $hook->set_description(get_string('team_cohort_owner', 'tool_murelation', $name), $url);
+    }
+
+    /**
      * Set up $PAGE for list of frameworks UI.
      *
      * @param moodle_url $pageurl

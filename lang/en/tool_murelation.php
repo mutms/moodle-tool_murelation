@@ -100,6 +100,7 @@ $string['team'] = 'Team';
 $string['team_cohort'] = 'Team cohort';
 $string['team_cohort_create'] = 'Create team cohort';
 $string['team_cohort_name'] = 'Team cohort name';
+$string['team_cohort_owner'] = 'Team cohort of {$a}';
 $string['team_create'] = 'Create team';
 $string['team_delete'] = 'Delete team';
 $string['team_delete_confirm'] = 'Tick the checkbox to confirm deleting of the team with {$a} subordinates';

@@ -6,6 +6,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## [Unreleased]
 
+### Added
+
+- team cohorts are described in advanced cohort management
+
 ### Changed
 
 - migration to new forms library
+- cohort names link to cohort management, the advanced cohort management page is used when installed
