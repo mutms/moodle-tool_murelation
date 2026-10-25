@@ -33,6 +33,10 @@ $callbacks = [
     ],
     [
         'hook' => \tool_mucohort\hook\cohort_owner::class,
-        'callback' => [\tool_murelation\local\management::class, 'callback_mucohort_cohort_owner'],
+        'callback' => [\tool_murelation\callback\tool_mucohort::class, 'cohort_owner'],
+    ],
+    [
+        'hook' => \tool_mucohort\hook\cohort_usage::class,
+        'callback' => [\tool_murelation\callback\tool_mucohort::class, 'cohort_usage'],
     ],
 ];

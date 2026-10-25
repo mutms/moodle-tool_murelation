@@ -25,6 +25,8 @@
  */
 
 $string['actions_a'] = '{$a} actions';
+$string['cohort_usage_framework'] = 'Relation frameworks: {$a}';
+$string['cohort_usage_team'] = 'Team cohort of teams';
 $string['error_maxsubordinates'] = 'Subordinates limit reached';
 $string['error_noframeworks'] = 'No user relation frameworks found';
 $string['error_nosubordinates'] = 'No subordinates found';
