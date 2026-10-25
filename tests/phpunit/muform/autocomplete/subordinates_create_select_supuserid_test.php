@@ -313,6 +313,7 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
         $this->assertNotNull($source->label((string)$user1->id));
         $this->assertNotNull($source->label((string)$user2->id));
         $this->assertNull($source->validate((string)$user1->id));
-        $this->assertSame('Suspended user', $source->validate((string)$user2->id));
+        // Suspended users are allowed, the same as in 4.5.
+        $this->assertNull($source->validate((string)$user2->id));
     }
 }

@@ -317,6 +317,7 @@ final class subordinates_create_subuserids_test extends \advanced_testcase {
         $this->setAdminUser();
         $source = new subordinates_create_subuserids((int)$framework1->id, 0, (int)$user0->id);
         $this->assertSame([(int)$user1->id, (int)$user2->id], array_keys($source->labels([(string)$user1->id, (string)$user2->id])));
-        $this->assertSame([(int)$user2->id => 'Suspended user'], $source->validate([(string)$user1->id, (string)$user2->id]));
+        // Suspended users are allowed, the same as in 4.5.
+        $this->assertSame([], $source->validate([(string)$user1->id, (string)$user2->id]));
     }
 }

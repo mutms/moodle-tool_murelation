@@ -273,7 +273,9 @@ final class team_create_userid_test extends \advanced_testcase {
         $this->assertNull($source->label((string)$user0->id));
         $this->assertNull($source->label((string)$suspended->id));
         $this->assertNull($source->validate((string)$user1->id));
-        $this->assertSame('Suspended user', $source->validate((string)$suspended->id));
+        // Suspended users are not offered as new supervisors, the same as in 4.5,
+        // they have no label above, so the value is refused by the form.
+        $this->assertNull($source->validate((string)$suspended->id));
 
         $source = new team_create_userid((int)$framework1->id, 0);
         $this->assertNotNull($source->label((string)$user0->id));
