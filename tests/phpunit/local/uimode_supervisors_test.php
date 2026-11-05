@@ -26,17 +26,18 @@ use tool_mulib\local\mulib;
 use tool_murelation\local\framework;
 use core\exception\invalid_parameter_exception;
 use core\exception\coding_exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Supervisors helper class tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\local\uimode_supervisors
  */
+#[CoversClass(\tool_murelation\local\uimode_supervisors::class)]
+#[Group('MuTMS')]
 final class uimode_supervisors_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

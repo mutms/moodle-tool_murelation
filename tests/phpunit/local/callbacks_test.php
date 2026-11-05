@@ -24,26 +24,24 @@ use tool_murelation\local\callbacks;
 use tool_mulib\local\mulib;
 use tool_murelation\local\supervisor;
 use tool_murelation\local\framework;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * User relation event and hook callbacks tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @coversDefaultClass \tool_murelation\local\callbacks
  */
+#[CoversClass(\tool_murelation\local\callbacks::class)]
+#[Group('MuTMS')]
 final class callbacks_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
 
-    /**
-     * @covers ::user_deleted
-     */
     public function test_user_deleted(): void {
         global $DB;
 
@@ -114,9 +112,6 @@ final class callbacks_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('tool_murelation_subordinate', ['supervisorid' => $supervisor2c->id, 'userid' => $user4->id]));
     }
 
-    /**
-     * @covers ::tenant_deleted
-     */
     public function test_tenant_deleted(): void {
         global $DB;
         if (!mulib::is_mutenancy_available()) {
@@ -208,9 +203,6 @@ final class callbacks_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('tool_murelation_tenant_allow', ['frameworkid' => $framework3->id, 'tenantid' => $tenant2->id]));
     }
 
-    /**
-     * @covers ::user_allocated
-     */
     public function test_user_allocated(): void {
         global $DB;
         if (!mulib::is_mutenancy_available()) {

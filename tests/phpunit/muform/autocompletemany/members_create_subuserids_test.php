@@ -22,17 +22,18 @@ namespace tool_murelation\phpunit\muform\autocompletemany;
 use tool_murelation\muform\autocompletemany\members_create_subuserids;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * New team members autocomplete source tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\muform\autocompletemany\members_create_subuserids
  */
+#[CoversClass(\tool_murelation\muform\autocompletemany\members_create_subuserids::class)]
+#[Group('MuTMS')]
 final class members_create_subuserids_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

@@ -22,17 +22,18 @@ namespace tool_murelation\phpunit\local;
 
 use tool_murelation\local\util;
 use tool_murelation\local\framework;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Utility class tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\local\util
  */
+#[CoversClass(\tool_murelation\local\util::class)]
+#[Group('MuTMS')]
 final class util_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

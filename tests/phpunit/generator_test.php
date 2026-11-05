@@ -21,26 +21,24 @@
 namespace tool_murelation\phpunit;
 
 use tool_murelation\local\framework;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Supervisors and teams generator tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @coversDefaultClass \tool_murelation_generator
  */
+#[CoversClass(\tool_murelation_generator::class)]
+#[Group('MuTMS')]
 final class generator_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
 
-    /**
-     * @covers ::create_supervisor_role
-     */
     public function test_create_supervisor_role(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
@@ -51,9 +49,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertArrayHasKey($roleid, $allowed);
     }
 
-    /**
-     * @covers ::create_framework
-     */
     public function test_create_framework(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
@@ -130,9 +125,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame('2', $framework4->uimode);
     }
 
-    /**
-     * @covers ::create_supervisor
-     */
     public function test_create_supervisor(): void {
         global $DB;
         /** @var \tool_murelation_generator $generator */
@@ -161,9 +153,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertTimeCurrent($supervisor->timecreated);
     }
 
-    /**
-     * @covers ::create_team
-     */
     public function test_create_team(): void {
         global $DB;
         /** @var \tool_murelation_generator $generator */
@@ -208,9 +197,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame('tool_murelation', $teamcohort->component);
     }
 
-    /**
-     * @covers ::create_member
-     */
     public function test_team_create_member(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');

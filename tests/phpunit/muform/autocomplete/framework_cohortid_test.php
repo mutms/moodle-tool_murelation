@@ -20,17 +20,18 @@
 namespace tool_murelation\phpunit\muform\autocomplete;
 
 use tool_murelation\muform\autocomplete\framework_cohortid;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Relation framework cohort autocomplete source tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\muform\autocomplete\framework_cohortid
  */
+#[CoversClass(\tool_murelation\muform\autocomplete\framework_cohortid::class)]
+#[Group('MuTMS')]
 final class framework_cohortid_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

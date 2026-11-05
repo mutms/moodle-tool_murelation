@@ -22,26 +22,24 @@ namespace tool_murelation\phpunit\local;
 
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * User relation framework tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\local\framework
  */
+#[CoversClass(\tool_murelation\local\framework::class)]
+#[Group('MuTMS')]
 final class framework_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
 
-    /**
-     * @covers ::create
-     */
     public function test_create(): void {
         global $DB;
 
@@ -214,9 +212,6 @@ final class framework_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('tool_murelation_tenant_allow', ['frameworkid' => $framework3->id, 'tenantid' => $tenant3->id]));
     }
 
-    /**
-     * @covers ::update
-     */
     public function test_update(): void {
         global $DB;
 
@@ -339,9 +334,6 @@ final class framework_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('tool_murelation_tenant_allow', ['frameworkid' => $framework3->id, 'tenantid' => $tenant3->id]));
     }
 
-    /**
-     * @covers ::is_deletable
-     */
     public function test_is_deletable(): void {
         /** @var \tool_murelation_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_murelation');
@@ -371,9 +363,6 @@ final class framework_test extends \advanced_testcase {
         $this->assertTrue(framework::is_deletable($framework4->id));
     }
 
-    /**
-     * @covers ::delete
-     */
     public function test_delete(): void {
         global $DB;
         /** @var \tool_murelation_generator $generator */
@@ -456,9 +445,6 @@ final class framework_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('tool_murelation_tenant_allow', ['frameworkid' => $framework4->id, 'tenantid' => $tenant2->id]));
     }
 
-    /**
-     * @covers ::get_uimodes
-     */
     public function test_get_uimodes(): void {
         $uimodes = framework::get_uimodes();
         $expected = [
@@ -468,18 +454,12 @@ final class framework_test extends \advanced_testcase {
         $this->assertSame($expected, $uimodes);
     }
 
-    /**
-     * @covers ::get_description_editor_options
-     */
     public function test_get_description_editor_options(): void {
         $options = framework::get_description_editor_options();
         $this->assertSame(0, $options['maxfiles']);
         $this->assertSame(CONTEXT_SYSTEM, $options['context']->contextlevel);
     }
 
-    /**
-     * @covers ::get_visibility_options
-     */
     public function test_get_visibility_options(): void {
         $expected = [
             0 => 'Hidden',
@@ -491,9 +471,6 @@ final class framework_test extends \advanced_testcase {
         $this->assertSame($expected, framework::get_visibility_options());
     }
 
-    /**
-     * @covers ::get_allowed_supervisor_roles
-     */
     public function test_get_allowed_supervisor_roles(): void {
         global $DB;
 

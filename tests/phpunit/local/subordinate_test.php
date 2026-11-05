@@ -25,17 +25,18 @@ use tool_murelation\local\subordinate;
 use tool_murelation\local\supervisor;
 use core\exception\coding_exception;
 use core\exception\invalid_parameter_exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Subordinate class tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\local\subordinate
  */
+#[CoversClass(\tool_murelation\local\subordinate::class)]
+#[Group('MuTMS')]
 final class subordinate_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

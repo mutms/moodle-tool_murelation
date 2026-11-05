@@ -22,17 +22,18 @@ namespace tool_murelation\phpunit\muform\autocomplete;
 use tool_murelation\muform\autocomplete\subordinates_create_select_supuserid;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Supervisor of new subordinates autocomplete source tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\muform\autocomplete\subordinates_create_select_supuserid
  */
+#[CoversClass(\tool_murelation\muform\autocomplete\subordinates_create_select_supuserid::class)]
+#[Group('MuTMS')]
 final class subordinates_create_select_supuserid_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {

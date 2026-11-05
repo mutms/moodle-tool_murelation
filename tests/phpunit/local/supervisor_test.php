@@ -25,17 +25,18 @@ use tool_mulib\local\mulib;
 use tool_murelation\local\framework;
 use core\exception\coding_exception;
 use core\exception\invalid_parameter_exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Supervisor class tests.
  *
- * @group       MuTMS
  * @package     tool_murelation
  * @copyright   2025 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_murelation\local\supervisor
  */
+#[CoversClass(\tool_murelation\local\supervisor::class)]
+#[Group('MuTMS')]
 final class supervisor_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
