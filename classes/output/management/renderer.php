@@ -20,7 +20,8 @@
 namespace tool_murelation\output\management;
 
 use tool_murelation\local\framework;
-use stdClass, moodle_url;
+use stdClass;
+use moodle_url;
 
 /**
  * Frameworks management renderer.

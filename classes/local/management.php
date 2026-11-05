@@ -19,7 +19,8 @@
 
 namespace tool_murelation\local;
 
-use moodle_url, stdClass;
+use moodle_url;
+use stdClass;
 
 /**
  * Framework management helper.
