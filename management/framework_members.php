@@ -64,6 +64,7 @@ $report = \core_reportbuilder\system_report_factory::create(
     $syscontext,
     parameters:['frameworkid' => $framework->id]
 );
+echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report));
 echo $report->output();
 
 echo $OUTPUT->footer();
