@@ -8,6 +8,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### Added
 
+- Czech translation and AI-produced previews of German, French, Italian, Portuguese and Spanish translations
 - team cohorts are described and cohort usage in frameworks and teams is listed in advanced cohort management
 
 ### Changed
