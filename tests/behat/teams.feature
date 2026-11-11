@@ -283,11 +283,11 @@ Feature: Teams management
     And I click on "Create team" "button" in the ".modal-dialog" "css_element"
 
     When I click on "Team actions" "link_or_button"
-    And I click on "Add from cohort" "link"
+    And I click on "Add Zaci from cohort" "link"
     And I set the following fields in the ".modal-dialog" "css_element" to these values:
       | Team position | xyz      |
       | Cohort        | Cohort 3 |
-    And I click on "Add from cohort" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add Zaci from cohort" "button" in the ".modal-dialog" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
       | First name | Email address        | Team position |
       | Student 1  | student1@example.com | xyz           |
