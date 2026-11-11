@@ -26,7 +26,7 @@
 
 $string['actions_a'] = 'Akce: {$a}';
 $string['cohort_usage_framework'] = 'Rámce vztahů: {$a}';
-$string['cohort_usage_team'] = 'Globální skupiny týmů';
+$string['cohort_usage_team'] = 'Týmy: Globální skupina týmu';
 $string['error_maxsubordinates'] = 'Dosažen limit počtu podřízených';
 $string['error_noframeworks'] = 'Nebyly nalezeny žádné rámce vztahů uživatelů';
 $string['error_nosubordinates'] = 'Nebyli nalezeni žádní podřízení';
@@ -62,7 +62,7 @@ $string['management_team_actions'] = 'Akce týmu';
 $string['management_user_actions'] = 'Akce souvisejících uživatelů';
 $string['member_delete_a'] = 'Odebrat: {$a}';
 $string['member_update_a'] = 'Upravit: {$a}';
-$string['members_add_cohort_a'] = 'Přidat z globální skupiny';
+$string['members_add_cohort_a'] = 'Přidat z globální skupiny: {$a}';
 $string['members_create_a'] = 'Přidat: {$a}';
 $string['murelation:manageframeworks'] = 'Správa rámců vztahů uživatelů';
 $string['murelation:managepositions'] = 'Správa nadřízených a týmů';

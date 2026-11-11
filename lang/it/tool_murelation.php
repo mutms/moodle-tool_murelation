@@ -30,7 +30,7 @@
 
 $string['actions_a'] = 'Azioni: {$a}';
 $string['cohort_usage_framework'] = 'Quadri delle relazioni: {$a}';
-$string['cohort_usage_team'] = 'Gruppi globali dei team';
+$string['cohort_usage_team'] = 'Team: Gruppo globale del team';
 $string['error_maxsubordinates'] = 'Limite di subordinati raggiunto';
 $string['error_noframeworks'] = 'Non sono stati trovati quadri delle relazioni tra utenti';
 $string['error_nosubordinates'] = 'Non sono stati trovati subordinati';
@@ -66,7 +66,7 @@ $string['management_team_actions'] = 'Azioni del team';
 $string['management_user_actions'] = 'Azioni sugli utenti correlati';
 $string['member_delete_a'] = 'Rimuovi: {$a}';
 $string['member_update_a'] = 'Modifica: {$a}';
-$string['members_add_cohort_a'] = 'Aggiungi da gruppo globale';
+$string['members_add_cohort_a'] = 'Aggiungi da gruppo globale: {$a}';
 $string['members_create_a'] = 'Aggiungi: {$a}';
 $string['murelation:manageframeworks'] = 'Gestire i quadri delle relazioni tra utenti';
 $string['murelation:managepositions'] = 'Gestire supervisori e team';

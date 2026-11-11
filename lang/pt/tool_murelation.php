@@ -30,7 +30,7 @@
 
 $string['actions_a'] = 'Ações: {$a}';
 $string['cohort_usage_framework'] = 'Quadros de relações: {$a}';
-$string['cohort_usage_team'] = 'Grupos globais de equipas';
+$string['cohort_usage_team'] = 'Equipas: Grupo global da equipa';
 $string['error_maxsubordinates'] = 'Limite de subordinados atingido';
 $string['error_noframeworks'] = 'Não foram encontrados quadros de relações entre utilizadores';
 $string['error_nosubordinates'] = 'Não foram encontrados subordinados';
@@ -66,7 +66,7 @@ $string['management_team_actions'] = 'Ações da equipa';
 $string['management_user_actions'] = 'Ações dos utilizadores relacionados';
 $string['member_delete_a'] = 'Remover: {$a}';
 $string['member_update_a'] = 'Editar: {$a}';
-$string['members_add_cohort_a'] = 'Adicionar a partir de grupo global';
+$string['members_add_cohort_a'] = 'Adicionar a partir de grupo global: {$a}';
 $string['members_create_a'] = 'Adicionar: {$a}';
 $string['murelation:manageframeworks'] = 'Gerir quadros de relações entre utilizadores';
 $string['murelation:managepositions'] = 'Gerir supervisores e equipas';

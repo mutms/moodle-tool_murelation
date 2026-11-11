@@ -30,7 +30,7 @@
 
 $string['actions_a'] = 'Actions : {$a}';
 $string['cohort_usage_framework'] = 'Référentiels de relations : {$a}';
-$string['cohort_usage_team'] = 'Cohortes d’équipe';
+$string['cohort_usage_team'] = 'Équipes : Cohorte de l’équipe';
 $string['error_maxsubordinates'] = 'Limite de subordonnés atteinte';
 $string['error_noframeworks'] = 'Aucun référentiel de relations entre utilisateurs trouvé';
 $string['error_nosubordinates'] = 'Aucun subordonné trouvé';
@@ -66,7 +66,7 @@ $string['management_team_actions'] = 'Actions de l’équipe';
 $string['management_user_actions'] = 'Actions sur les utilisateurs liés';
 $string['member_delete_a'] = 'Retirer : {$a}';
 $string['member_update_a'] = 'Modifier : {$a}';
-$string['members_add_cohort_a'] = 'Ajouter depuis une cohorte';
+$string['members_add_cohort_a'] = 'Ajouter depuis une cohorte : {$a}';
 $string['members_create_a'] = 'Ajouter : {$a}';
 $string['murelation:manageframeworks'] = 'Gérer les référentiels de relations entre utilisateurs';
 $string['murelation:managepositions'] = 'Gérer les supérieurs et les équipes';

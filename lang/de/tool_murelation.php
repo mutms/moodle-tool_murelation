@@ -30,7 +30,7 @@
 
 $string['actions_a'] = 'Aktionen: {$a}';
 $string['cohort_usage_framework'] = 'Beziehungsrahmen: {$a}';
-$string['cohort_usage_team'] = 'Globale Gruppen von Teams';
+$string['cohort_usage_team'] = 'Teams: Globale Gruppe des Teams';
 $string['error_maxsubordinates'] = 'Höchstzahl der Mitarbeiter/innen erreicht';
 $string['error_noframeworks'] = 'Keine Beziehungsrahmen für Nutzer/innen gefunden';
 $string['error_nosubordinates'] = 'Keine Mitarbeiter/innen gefunden';
@@ -66,7 +66,7 @@ $string['management_team_actions'] = 'Aktionen für das Team';
 $string['management_user_actions'] = 'Aktionen für Nutzerbeziehungen';
 $string['member_delete_a'] = '{$a} entfernen';
 $string['member_update_a'] = '{$a} bearbeiten';
-$string['members_add_cohort_a'] = 'Aus globaler Gruppe hinzufügen';
+$string['members_add_cohort_a'] = '{$a} aus globaler Gruppe hinzufügen';
 $string['members_create_a'] = '{$a} hinzufügen';
 $string['murelation:manageframeworks'] = 'Beziehungsrahmen für Nutzer/innen verwalten';
 $string['murelation:managepositions'] = 'Vorgesetzte und Teams verwalten';
