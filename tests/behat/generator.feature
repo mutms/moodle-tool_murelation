@@ -65,11 +65,11 @@ Feature: Behat tool_murelation generator usage
     And I should see "Position managers, supervisors, course teachers and subordinates" in the "Positions visibility" definition list item
     And I should see "Not set" in the "Management restricted to cohort" definition list item
     And I should see "Supervisor" in the "Supervisor title" definition list item
-    And I should see "Supervisors" in the "Supervisors plural" definition list item
+    And I should see "Supervisors" in the "Supervisor title (plural)" definition list item
     And I should see "Not set" in the "Supervisor candidates cohort" definition list item
     And I should see "Not set" in the "Supervisor role" definition list item
     And I should see "Subordinate" in the "Subordinate title" definition list item
-    And I should see "Subordinates" in the "Subordinates plural" definition list item
+    And I should see "Subordinates" in the "Subordinate title (plural)" definition list item
     And I should see "Not set" in the "Subordinate candidates cohort" definition list item
 
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
@@ -80,11 +80,11 @@ Feature: Behat tool_murelation generator usage
     And I should see "Position managers, supervisors, course teachers and subordinates" in the "Positions visibility" definition list item
     And I should see "Not set" in the "Management restricted to cohort" definition list item
     And I should see "Supervisor" in the "Supervisor title" definition list item
-    And I should see "Supervisors" in the "Supervisors plural" definition list item
+    And I should see "Supervisors" in the "Supervisor title (plural)" definition list item
     And I should see "Not set" in the "Supervisor candidates cohort" definition list item
     And I should see "Not set" in the "Supervisor role" definition list item
     And I should see "Subordinate" in the "Subordinate title" definition list item
-    And I should see "Subordinates" in the "Subordinates plural" definition list item
+    And I should see "Subordinates" in the "Subordinate title (plural)" definition list item
     And I should see "Not set" in the "Subordinate candidates cohort" definition list item
 
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
@@ -96,11 +96,11 @@ Feature: Behat tool_murelation generator usage
     And I should see "Position managers" in the "Positions visibility" definition list item
     And I should see "Cohort 1" in the "Management restricted to cohort" definition list item
     And I should see "Ucitel" in the "Supervisor title" definition list item
-    And I should see "Ucitele" in the "Supervisors plural" definition list item
+    And I should see "Ucitele" in the "Supervisor title (plural)" definition list item
     And I should see "Cohort 2" in the "Supervisor candidates cohort" definition list item
     And I should see "UManager" in the "Supervisor role" definition list item
     And I should see "Zak" in the "Subordinate title" definition list item
-    And I should see "Zaci" in the "Subordinates plural" definition list item
+    And I should see "Zaci" in the "Subordinate title (plural)" definition list item
     And I should see "Cohort 3" in the "Subordinate candidates cohort" definition list item
 
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
@@ -112,11 +112,11 @@ Feature: Behat tool_murelation generator usage
     And I should see "Everybody" in the "Positions visibility" definition list item
     And I should see "Cohort 1" in the "Management restricted to cohort" definition list item
     And I should see "Velitel" in the "Supervisor title" definition list item
-    And I should see "Velitele" in the "Supervisors plural" definition list item
+    And I should see "Velitele" in the "Supervisor title (plural)" definition list item
     And I should see "Cohort 2" in the "Supervisor candidates cohort" definition list item
     And I should see "TManager" in the "Supervisor role" definition list item
     And I should see "Pesak" in the "Subordinate title" definition list item
-    And I should see "Pesaci" in the "Subordinates plural" definition list item
+    And I should see "Pesaci" in the "Subordinate title (plural)" definition list item
     And I should see "Cohort 3" in the "Subordinate candidates cohort" definition list item
 
   Scenario: tool_murelation generator may create supervisors
