@@ -92,7 +92,7 @@ Feature: Teams management
       | teamcohortname   | Team cohort 2        |
     And I click on "Create team" "button" in the "dialog[open]" "css_element"
     Then I should see "Team Two" in the "Team name" definition list item
-    And I should see "team2" in the "Team ID number" definition list item
+    And I should see "team2" in the "Team ID" definition list item
     And I should see "Teacher 2" in the "Teacher" definition list item
     And I should see "Yes" in the "Supervisor-managed team" definition list item
     And I should see "2 / 10" in the "Max team members" definition list item
@@ -119,7 +119,7 @@ Feature: Teams management
       | teamcohortname  | Team cohort B |
     And I click on "Update team" "button" in the "dialog[open]" "css_element"
     Then I should see "Team B" in the "Team name" definition list item
-    And I should see "teamb" in the "Team ID number" definition list item
+    And I should see "teamb" in the "Team ID" definition list item
     And I should see "Teacher 1" in the "Teacher" definition list item
     And I should see "No" in the "Supervisor-managed team" definition list item
     And I should see "2 / 11" in the "Max team members" definition list item
@@ -180,8 +180,8 @@ Feature: Teams management
       | confirm | 1 |
     And I click on "Delete team" "button" in the "dialog[open]" "css_element"
     Then the following should exist in the "reportbuilder-table" table:
-      | Team name | Team ID number        | Supervisor-managed team |
-      | Team One  |                       | No                      |
+      | Team name | Team ID | Supervisor-managed team |
+      | Team One  |         | No                      |
     And I should not see "Team B"
 
   Scenario: User teams are visible in user profile
@@ -212,8 +212,8 @@ Feature: Teams management
     When I am on the "manager2" "user > profile" page logged in as "manager1"
     And I follow "Supervised teams"
     Then the following should exist in the "reportbuilder-table" table:
-      | Relation framework | Team name | Team ID number        | Supervisor title    | Supervisor-managed team | Subordinates |
-      | Framework 1        | Team One  | tm1                   | Ucitel              | No                      | 2            |
+      | Relation framework | Team name | Team ID | Supervisor title | Supervisor-managed team | Subordinates |
+      | Framework 1        | Team One  | tm1     | Ucitel           | No                      | 2            |
 
   Scenario: Team supervisor may manage own team
     Given the following "tool_murelation > frameworks" exist:
