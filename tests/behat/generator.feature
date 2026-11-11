@@ -154,10 +154,10 @@ Feature: Behat tool_murelation generator usage
     And I follow "Framework 1"
     And I follow "Teams"
     Then the following should exist in the "reportbuilder-table" table:
-      | Team name | Team ID number        | Manazer    | Supervisor-managed team | Podrizeni |
-      | Prvni tym | tm1                   | Manager 1  | No                      | 0         |
-      | Druhy tym |                       |            | No                      | 0         |
-      | Treti tym |                       |            | Yes                     | 0         |
+      | Team name | Team ID | Manazer   | Supervisor-managed team | Podrizeni |
+      | Prvni tym | tm1     | Manager 1 | No                      | 0         |
+      | Druhy tym |         |           | No                      | 0         |
+      | Treti tym |         |           | Yes                     | 0         |
 
   Scenario: tool_murelation generator may create team members
     Given the following "tool_murelation > frameworks" exist:
@@ -180,11 +180,11 @@ Feature: Behat tool_murelation generator usage
     And I follow "Framework 1"
     And I follow "Podrizeni"
     Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position | Manazer   | Team name | Team ID number |
-      | Manager 1  | manager1@example.com | Velitel       | Manager 1 | Prvni tym | tm1            |
-      | Student 1  | student1@example.com |               | Manager 1 | Prvni tym | tm1            |
-      | Student 2  | student2@example.com |               | Manager 1 | Prvni tym | tm1            |
-      | Student 3  | student3@example.com |               |           | Druhy tym |                |
+      | First name | Email address        | Team position | Manazer   | Team name | Team ID |
+      | Manager 1  | manager1@example.com | Velitel       | Manager 1 | Prvni tym | tm1     |
+      | Student 1  | student1@example.com |               | Manager 1 | Prvni tym | tm1     |
+      | Student 2  | student2@example.com |               | Manager 1 | Prvni tym | tm1     |
+      | Student 3  | student3@example.com |               |           | Druhy tym |         |
 
   @tool_mutenancy
   Scenario: tool_murelation generator may create tenant teams
@@ -206,7 +206,7 @@ Feature: Behat tool_murelation generator usage
     And I follow "Framework 1"
     And I follow "Teams"
     Then the following should exist in the "reportbuilder-table" table:
-      | Team name | Team ID number        | Manazer    | Supervisor-managed team | Tenant   | Podrizeni |
-      | Prvni tym |                       |            | No                      | Tenant 1 | 0         |
-      | Druhy tym |                       |            | No                      | Tenant 2 | 0         |
-      | Treti tym |                       |            | No                      |          | 0         |
+      | Team name | Team ID | Manazer | Supervisor-managed team | Tenant   | Podrizeni |
+      | Prvni tym |         |         | No                      | Tenant 1 | 0         |
+      | Druhy tym |         |         | No                      | Tenant 2 | 0         |
+      | Treti tym |         |         | No                      |          | 0         |
