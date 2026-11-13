@@ -65,7 +65,11 @@ $report = \core_reportbuilder\system_report_factory::create(
     \tool_murelation\reportbuilder\local\systemreports\frameworks::class,
     $syscontext
 );
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report));
+echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
+    'framework:name' => null,
+    'framework:uimode' => null,
+]));
 echo $report->output();
+echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
 
 echo $OUTPUT->footer();

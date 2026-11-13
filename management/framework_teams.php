@@ -87,7 +87,12 @@ $report = \core_reportbuilder\system_report_factory::create(
     $syscontext,
     parameters:['frameworkid' => $framework->id]
 );
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report));
+echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
+    'supervisor:teamname' => null,
+    'user:fullname' => null,
+    'supervisor:vacant' => null,
+]));
 echo $report->output();
+echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
 
 echo $OUTPUT->footer();
