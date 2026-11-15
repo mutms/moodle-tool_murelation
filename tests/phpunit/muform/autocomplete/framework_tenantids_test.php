@@ -17,9 +17,9 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\phpunit\muform\autocompletemany;
+namespace tool_murelation\phpunit\muform\autocomplete;
 
-use tool_murelation\muform\autocompletemany\framework_tenantids;
+use tool_murelation\muform\autocomplete\framework_tenantids;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -31,7 +31,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_murelation\muform\autocompletemany\framework_tenantids::class)]
+#[CoversClass(\tool_murelation\muform\autocomplete\framework_tenantids::class)]
 #[Group('MuTMS')]
 final class framework_tenantids_test extends \advanced_testcase {
     #[\Override]

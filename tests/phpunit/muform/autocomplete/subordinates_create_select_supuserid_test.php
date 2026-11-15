@@ -92,22 +92,22 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
         $this->assertSame([(int)$framework1->id, 0], $source->get_args());
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user1->id, (int)$user0->id, (int)$user2->id], array_keys($result));
         $this->assertStringContainsString('First User', $result[$user1->id]);
         $this->assertStringContainsString('user1@example.com', $result[$user1->id]);
 
-        $result = $source->search('irst', 50);
+        $result = $source->search('irst', 50, []);
         $this->assertSame([(int)$user1->id], array_keys($result));
 
-        $this->assertNull($source->search('', 4));
-        $this->assertCount(5, $source->search('', 5));
+        $this->assertNull($source->search('', 4, []));
+        $this->assertCount(5, $source->search('', 5, []));
 
         $source = new subordinates_create_select_supuserid((int)$framework2->id, 0);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user2->id], array_keys($result));
 
-        $result = $source->search('user2@', 50);
+        $result = $source->search('user2@', 50, []);
         $this->assertSame([(int)$user2->id], array_keys($result));
 
         try {
@@ -144,27 +144,27 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
         $this->setUser($manager);
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user1->id, (int)$user0->id, (int)$user2->id], array_keys($result));
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, (int)$tenant1->id);
         $this->assertSame([(int)$framework1->id, (int)$tenant1->id], $source->get_args());
-        $this->assertSame([], $source->search('', 50));
+        $this->assertSame([], $source->search('', 50, []));
 
         $user1 = \tool_mutenancy\local\user::allocate($user1->id, $tenant1->id);
         $user2 = \tool_mutenancy\local\user::allocate($user2->id, $tenant2->id);
         cohort_add_member($cohort1->id, $user0->id);
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user1->id, (int)$user0->id, (int)$user2->id], array_keys($result));
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, (int)$tenant1->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user0->id], array_keys($result));
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, (int)$tenant2->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user2->id], array_keys($result));
     }
 
@@ -196,13 +196,15 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
 
         $this->setUser($user);
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
-        $result = $source->label((string)$user1->id);
+        $value = (string)$user1->id;
+        $result = $source->labels([$value])[$value] ?? null;
         $this->assertStringContainsString('First User', $result);
         $this->assertStringNotContainsString($user1->email, $result);
 
         $this->setUser($manager);
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
-        $result = $source->label((string)$user1->id);
+        $value = (string)$user1->id;
+        $result = $source->labels([$value])[$value] ?? null;
         $this->assertStringContainsString('First User', $result);
         $this->assertStringContainsString($user1->email, $result);
     }
@@ -258,18 +260,24 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
         $this->setUser($manager);
 
         $source = new subordinates_create_select_supuserid((int)$framework2->id, 0);
-        $this->assertStringContainsString('First User', $source->label((string)$user1->id));
-        $this->assertStringContainsString('Second User', $source->label((string)$user2->id));
-        $this->assertNull($source->label((string)$user0->id));
-        $this->assertNull($source->validate((string)$user1->id));
+        $value = (string)$user1->id;
+        $this->assertStringContainsString('First User', $source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertStringContainsString('Second User', $source->labels([$value])[$value] ?? null);
+        $value = (string)$user0->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
 
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
-        $this->assertNotNull($source->label((string)$user0->id));
-        $this->assertNull($source->label((string)$deleted->id));
-        $this->assertNull($source->label('-10'));
-        $this->assertNull($source->label('999999'));
-        $this->assertNull($source->label('abc'));
-        $this->assertNull($source->label(''));
+        $value = (string)$user0->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$deleted->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $this->assertNull($source->labels(['-10'])['-10'] ?? null);
+        $this->assertNull($source->labels(['999999'])['999999'] ?? null);
+        $this->assertNull($source->labels(['abc'])['abc'] ?? null);
+        $this->assertNull($source->labels([''])[''] ?? null);
 
         if (!mulib::is_mutenancy_available()) {
             return;
@@ -292,12 +300,16 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
         cohort_add_member($cohort1->id, $user0->id);
 
         $source = new subordinates_create_select_supuserid((int)$framework2->id, 0);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNotNull($source->label((string)$user2->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
 
         $source = new subordinates_create_select_supuserid((int)$framework2->id, (int)$tenant1->id);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNull($source->label((string)$user2->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
     }
 
     public function test_validate(): void {
@@ -311,10 +323,14 @@ final class subordinates_create_select_supuserid_test extends \advanced_testcase
 
         $this->setAdminUser();
         $source = new subordinates_create_select_supuserid((int)$framework1->id, 0);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNotNull($source->label((string)$user2->id));
-        $this->assertNull($source->validate((string)$user1->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
         // Suspended users are allowed, the same as in 4.5.
-        $this->assertNull($source->validate((string)$user2->id));
+        $value = (string)$user2->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
     }
 }

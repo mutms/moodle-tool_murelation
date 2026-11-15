@@ -16,7 +16,7 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_murelation\muform\autocompletemany;
+namespace tool_murelation\muform\autocomplete;
 
 use tool_mulib\local\mulib;
 use tool_mulib\local\sql;
@@ -28,7 +28,7 @@ use tool_mulib\local\sql;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class framework_tenantids extends \tool_mulib\muform\autocompletemany\base {
+final class framework_tenantids extends \tool_mulib\muform\autocomplete\base {
     /**
      * Constructor.
      */

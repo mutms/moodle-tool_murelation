@@ -107,28 +107,28 @@ final class team_update_userid_test extends \advanced_testcase {
 
         $source = new team_update_userid((int)$supervisor1->id);
         $this->assertSame([(int)$supervisor1->id], $source->get_args());
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user1->id, (int)$user0->id, (int)$user2->id], array_keys($result));
         $this->assertStringContainsString('First User', $result[$user1->id]);
         $this->assertStringContainsString('user1@example.com', $result[$user1->id]);
 
-        $result = $source->search('irst', 50);
+        $result = $source->search('irst', 50, []);
         $this->assertSame([(int)$user1->id], array_keys($result));
 
-        $this->assertNull($source->search('', 4));
-        $this->assertCount(5, $source->search('', 5));
+        $this->assertNull($source->search('', 4, []));
+        $this->assertCount(5, $source->search('', 5, []));
 
         $source = new team_update_userid((int)$supervisor2->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user2->id], array_keys($result));
 
-        $result = $source->search('user2@', 50);
+        $result = $source->search('user2@', 50, []);
         $this->assertSame([(int)$user2->id], array_keys($result));
 
         // Current team supervisor is always a candidate.
         $DB->set_field('tool_murelation_supervisor', 'userid', $user0->id, ['id' => $supervisor2->id]);
         $source = new team_update_userid((int)$supervisor2->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user0->id, (int)$user2->id], array_keys($result));
 
         try {
@@ -165,23 +165,23 @@ final class team_update_userid_test extends \advanced_testcase {
         $this->setUser($manager);
 
         $source = new team_update_userid((int)$supervisor1->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user1->id, (int)$user0->id, (int)$user2->id], array_keys($result));
 
         $DB->set_field('tool_murelation_supervisor', 'tenantid', $tenant1->id, ['id' => $supervisor1->id]);
         $source = new team_update_userid((int)$supervisor1->id);
-        $this->assertSame([], $source->search('', 50));
+        $this->assertSame([], $source->search('', 50, []));
 
         $user1 = \tool_mutenancy\local\user::allocate($user1->id, $tenant1->id);
         $user2 = \tool_mutenancy\local\user::allocate($user2->id, $tenant2->id);
         cohort_add_member($cohort1->id, $user0->id);
 
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user0->id], array_keys($result));
 
         $DB->set_field('tool_murelation_supervisor', 'tenantid', $tenant2->id, ['id' => $supervisor1->id]);
         $source = new team_update_userid((int)$supervisor1->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user2->id], array_keys($result));
     }
 
@@ -217,13 +217,15 @@ final class team_update_userid_test extends \advanced_testcase {
 
         $this->setUser($user);
         $source = new team_update_userid((int)$supervisor1->id);
-        $result = $source->label((string)$user1->id);
+        $value = (string)$user1->id;
+        $result = $source->labels([$value])[$value] ?? null;
         $this->assertStringContainsString('First User', $result);
         $this->assertStringNotContainsString($user1->email, $result);
 
         $this->setUser($manager);
         $source = new team_update_userid((int)$supervisor1->id);
-        $result = $source->label((string)$user1->id);
+        $value = (string)$user1->id;
+        $result = $source->labels([$value])[$value] ?? null;
         $this->assertStringContainsString('First User', $result);
         $this->assertStringContainsString($user1->email, $result);
     }
@@ -289,21 +291,27 @@ final class team_update_userid_test extends \advanced_testcase {
         $this->setUser($manager);
 
         $source = new team_update_userid((int)$supervisor2->id);
-        $this->assertStringContainsString('First User', $source->label((string)$user1->id));
-        $this->assertStringContainsString('Second User', $source->label((string)$user2->id));
-        $this->assertNull($source->label((string)$user0->id));
-        $this->assertNull($source->label((string)$deleted->id));
-        $this->assertNull($source->label('0'));
-        $this->assertNull($source->label('-10'));
-        $this->assertNull($source->label('999999'));
-        $this->assertNull($source->label('abc'));
-        $this->assertNull($source->label(''));
-        $this->assertNull($source->validate((string)$user1->id));
+        $value = (string)$user1->id;
+        $this->assertStringContainsString('First User', $source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertStringContainsString('Second User', $source->labels([$value])[$value] ?? null);
+        $value = (string)$user0->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$deleted->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $this->assertNull($source->labels(['0'])['0'] ?? null);
+        $this->assertNull($source->labels(['-10'])['-10'] ?? null);
+        $this->assertNull($source->labels(['999999'])['999999'] ?? null);
+        $this->assertNull($source->labels(['abc'])['abc'] ?? null);
+        $this->assertNull($source->labels([''])[''] ?? null);
+        $value = (string)$user1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
 
         // Current team supervisor is always accepted.
         $DB->set_field('tool_murelation_supervisor', 'userid', $user0->id, ['id' => $supervisor2->id]);
         $source = new team_update_userid((int)$supervisor2->id);
-        $this->assertNotNull($source->label((string)$user0->id));
+        $value = (string)$user0->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
         $DB->set_field('tool_murelation_supervisor', 'userid', null, ['id' => $supervisor2->id]);
 
         if (!mulib::is_mutenancy_available()) {
@@ -327,18 +335,23 @@ final class team_update_userid_test extends \advanced_testcase {
         cohort_add_member($cohort1->id, $user0->id);
 
         $source = new team_update_userid((int)$supervisor2->id);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNotNull($source->label((string)$user2->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
 
         $DB->set_field('tool_murelation_supervisor', 'tenantid', $tenant1->id, ['id' => $supervisor2->id]);
         $source = new team_update_userid((int)$supervisor2->id);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNull($source->label((string)$user2->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
 
         // Current supervisor moved to another tenant is still accepted, the team can be saved unchanged.
         $DB->set_field('tool_murelation_supervisor', 'userid', $user2->id, ['id' => $supervisor2->id]);
         $source = new team_update_userid((int)$supervisor2->id);
-        $this->assertStringContainsString(fullname($user2), $source->label((string)$user2->id));
+        $value = (string)$user2->id;
+        $this->assertStringContainsString(fullname($user2), $source->labels([$value])[$value] ?? null);
     }
 
     public function test_validate(): void {
@@ -356,10 +369,14 @@ final class team_update_userid_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $source = new team_update_userid((int)$supervisor1->id);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNotNull($source->label((string)$user2->id));
-        $this->assertNull($source->validate((string)$user1->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
         // Suspended users are allowed, the same as in 4.5.
-        $this->assertNull($source->validate((string)$user2->id));
+        $value = (string)$user2->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
     }
 }

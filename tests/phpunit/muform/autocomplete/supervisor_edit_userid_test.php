@@ -92,22 +92,22 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
 
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user1->id);
         $this->assertSame([(int)$framework1->id, (int)$user1->id], $source->get_args());
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user0->id, (int)$user2->id], array_keys($result));
         $this->assertStringContainsString('Second User', $result[$user2->id]);
         $this->assertStringContainsString('user2@example.com', $result[$user2->id]);
 
-        $result = $source->search('econd', 50);
+        $result = $source->search('econd', 50, []);
         $this->assertSame([(int)$user2->id], array_keys($result));
 
-        $this->assertNull($source->search('', 3));
-        $this->assertCount(4, $source->search('', 4));
+        $this->assertNull($source->search('', 3, []));
+        $this->assertCount(4, $source->search('', 4, []));
 
         $source = new supervisor_edit_userid((int)$framework2->id, (int)$user0->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user2->id], array_keys($result));
 
-        $result = $source->search('user2@', 50);
+        $result = $source->search('user2@', 50, []);
         $this->assertSame([(int)$user2->id], array_keys($result));
 
         // Current supervisor is always a candidate.
@@ -118,7 +118,7 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
         ]);
         cohort_remove_member($cohort->id, $user2->id);
         $source = new supervisor_edit_userid((int)$framework2->id, (int)$user0->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user1->id, (int)$user2->id], array_keys($result));
 
         try {
@@ -155,7 +155,7 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
         $this->setUser($manager);
 
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user1->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$manager->id, (int)$admin->id, (int)$user0->id, (int)$user2->id], array_keys($result));
 
         $user1 = \tool_mutenancy\local\user::allocate($user1->id, $tenant1->id);
@@ -163,11 +163,11 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
         cohort_add_member($cohort1->id, $user0->id);
 
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user1->id);
-        $result = $source->search('', 50);
+        $result = $source->search('', 50, []);
         $this->assertSame([(int)$user0->id], array_keys($result));
 
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user2->id);
-        $this->assertSame([], $source->search('', 50));
+        $this->assertSame([], $source->search('', 50, []));
     }
 
     public function test_label_identity(): void {
@@ -199,13 +199,15 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
 
         $this->setUser($user);
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user0->id);
-        $result = $source->label((string)$user1->id);
+        $value = (string)$user1->id;
+        $result = $source->labels([$value])[$value] ?? null;
         $this->assertStringContainsString('First User', $result);
         $this->assertStringNotContainsString($user1->email, $result);
 
         $this->setUser($manager);
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user0->id);
-        $result = $source->label((string)$user1->id);
+        $value = (string)$user1->id;
+        $result = $source->labels([$value])[$value] ?? null;
         $this->assertStringContainsString('First User', $result);
         $this->assertStringContainsString($user1->email, $result);
     }
@@ -262,16 +264,22 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
         $this->setUser($manager);
 
         $source = new supervisor_edit_userid((int)$framework2->id, (int)$user0->id);
-        $this->assertStringContainsString('First User', $source->label((string)$user1->id));
-        $this->assertStringContainsString('Second User', $source->label((string)$user2->id));
-        $this->assertNull($source->label((string)$user0->id));
-        $this->assertNull($source->label((string)$user3->id));
-        $this->assertNull($source->label((string)$deleted->id));
-        $this->assertNull($source->label('-10'));
-        $this->assertNull($source->label('999999'));
-        $this->assertNull($source->label('abc'));
-        $this->assertNull($source->label(''));
-        $this->assertNull($source->validate((string)$user1->id));
+        $value = (string)$user1->id;
+        $this->assertStringContainsString('First User', $source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertStringContainsString('Second User', $source->labels([$value])[$value] ?? null);
+        $value = (string)$user0->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user3->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$deleted->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $this->assertNull($source->labels(['-10'])['-10'] ?? null);
+        $this->assertNull($source->labels(['999999'])['999999'] ?? null);
+        $this->assertNull($source->labels(['abc'])['abc'] ?? null);
+        $this->assertNull($source->labels([''])[''] ?? null);
+        $value = (string)$user1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
 
         // Current supervisor is always accepted, whatever changed since.
         \tool_murelation\local\uimode_supervisors::supervisor_edit((object)[
@@ -281,9 +289,11 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
         ]);
         cohort_remove_member($cohort->id, $user2->id);
         $source = new supervisor_edit_userid((int)$framework2->id, (int)$user0->id);
-        $this->assertNotNull($source->label((string)$user2->id));
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
         $source = new supervisor_edit_userid((int)$framework2->id, (int)$user3->id);
-        $this->assertNull($source->label((string)$user2->id));
+        $value = (string)$user2->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
 
         if (!mulib::is_mutenancy_available()) {
             return;
@@ -306,12 +316,16 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
         cohort_add_member($cohort1->id, $user0->id);
 
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user0->id);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNotNull($source->label((string)$user2->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
 
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user1->id);
-        $this->assertNotNull($source->label((string)$user0->id));
-        $this->assertNull($source->label((string)$user2->id));
+        $value = (string)$user0->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
     }
 
     public function test_validate(): void {
@@ -326,10 +340,14 @@ final class supervisor_edit_userid_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $source = new supervisor_edit_userid((int)$framework1->id, (int)$user0->id);
-        $this->assertNotNull($source->label((string)$user1->id));
-        $this->assertNotNull($source->label((string)$user2->id));
-        $this->assertNull($source->validate((string)$user1->id));
+        $value = (string)$user1->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user2->id;
+        $this->assertNotNull($source->labels([$value])[$value] ?? null);
+        $value = (string)$user1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
         // Suspended users are allowed, the same as in 4.5.
-        $this->assertNull($source->validate((string)$user2->id));
+        $value = (string)$user2->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
     }
 }

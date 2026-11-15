@@ -98,21 +98,21 @@ final class framework_cohortid_test extends \advanced_testcase {
         $this->assertSame([
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('', 50));
+        ], $source->search('', 50, []));
 
         $this->assertSame([
             (int)$cohort1->id => $cohort1->name,
-        ], $source->search('First', 50));
+        ], $source->search('First', 50, []));
 
         $this->assertSame([
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('koh2', 50));
+        ], $source->search('koh2', 50, []));
 
-        $this->assertNull($source->search('', 1));
+        $this->assertNull($source->search('', 1, []));
         $this->assertSame([
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('', 2));
+        ], $source->search('', 2, []));
 
         assign_capability('moodle/cohort:view', CAP_ALLOW, $roleid, $syscontext->id);
         $this->setUser($manager);
@@ -121,7 +121,7 @@ final class framework_cohortid_test extends \advanced_testcase {
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
             (int)$cohort3->id => $cohort3->name,
-        ], $source->search('', 50));
+        ], $source->search('', 50, []));
     }
 
     public function test_label(): void {
@@ -154,23 +154,30 @@ final class framework_cohortid_test extends \advanced_testcase {
         $this->setUser($manager);
 
         $source = new framework_cohortid(0);
-        $this->assertSame($cohort1->name, $source->label((string)$cohort1->id));
-        $this->assertSame($cohort2->name, $source->label((string)$cohort2->id));
-        $this->assertNull($source->label((string)$cohort3->id));
-        $this->assertNull($source->label('-10'));
-        $this->assertNull($source->label('999999'));
-        $this->assertNull($source->label('abc'));
-        $this->assertNull($source->label(''));
-        $this->assertNull($source->validate((string)$cohort1->id));
+        $value = (string)$cohort1->id;
+        $this->assertSame($cohort1->name, $source->labels([$value])[$value] ?? null);
+        $value = (string)$cohort2->id;
+        $this->assertSame($cohort2->name, $source->labels([$value])[$value] ?? null);
+        $value = (string)$cohort3->id;
+        $this->assertNull($source->labels([$value])[$value] ?? null);
+        $this->assertNull($source->labels(['-10'])['-10'] ?? null);
+        $this->assertNull($source->labels(['999999'])['999999'] ?? null);
+        $this->assertNull($source->labels(['abc'])['abc'] ?? null);
+        $this->assertNull($source->labels([''])[''] ?? null);
+        $value = (string)$cohort1->id;
+        $this->assertNull($source->validate([$value])[$value] ?? null);
 
         // Current value is always accepted.
         $source = new framework_cohortid((int)$cohort3->id);
-        $this->assertSame($cohort3->name, $source->label((string)$cohort3->id));
-        $this->assertSame($cohort1->name, $source->label((string)$cohort1->id));
+        $value = (string)$cohort3->id;
+        $this->assertSame($cohort3->name, $source->labels([$value])[$value] ?? null);
+        $value = (string)$cohort1->id;
+        $this->assertSame($cohort1->name, $source->labels([$value])[$value] ?? null);
 
         assign_capability('moodle/cohort:view', CAP_ALLOW, $roleid, $syscontext->id);
         $this->setUser($manager);
         $source = new framework_cohortid(0);
-        $this->assertSame($cohort3->name, $source->label((string)$cohort3->id));
+        $value = (string)$cohort3->id;
+        $this->assertSame($cohort3->name, $source->labels([$value])[$value] ?? null);
     }
 }

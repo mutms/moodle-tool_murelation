@@ -17,7 +17,7 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\autocompletemany;
+namespace tool_murelation\muform\autocomplete;
 
 use stdClass;
 use tool_murelation\local\uimode_supervisors;
@@ -30,7 +30,7 @@ use tool_murelation\muform\util\autocomplete\framework_users_trait;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class subordinates_create_subuserids extends \tool_mulib\muform\autocompletemany\base {
+final class subordinates_create_subuserids extends \tool_mulib\muform\autocomplete\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */

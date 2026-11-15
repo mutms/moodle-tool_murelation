@@ -79,7 +79,7 @@ $extra = ['framework' => $framework, 'tenantid' => $tenantid];
 if ($supuserid) {
     // The supervisor comes from the URL of the second step, it must be a valid candidate.
     $source = new \tool_murelation\muform\autocomplete\subordinates_create_select_supuserid($framework->id, (int)$tenantid);
-    if ($source->label((string)$supuserid) === null) {
+    if (!$source->labels([(string)$supuserid])) {
         $supuserid = 0;
     }
 }

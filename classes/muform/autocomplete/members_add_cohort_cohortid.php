@@ -68,7 +68,7 @@ final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems): ?array {
+    public function search(string $query, int $maxitems, array $exclude): ?array {
         global $DB;
         $sql = $this->get_cohorts_sql()->replace_comment('searchsql', search_util::get_cohort_search_query(trim($query), 'ch')->wrap('AND ', ''));
         $sql = $sql->replace_comment('idwhere', '');
@@ -80,7 +80,7 @@ final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\
     }
 
     #[\Override]
-    public function label(string $value): ?string {
+    protected function label_value(string $value): ?string {
         global $DB;
         if (!preg_match('/^[1-9][0-9]*$/D', $value)) {
             return null;
@@ -95,7 +95,7 @@ final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\
     }
 
     #[\Override]
-    public function validate(string $value): ?string {
+    protected function validate_value(string $value): ?string {
         global $DB;
         $candidates = self::get_candidates($this->supervisor->id, (int)$value);
         if (!$candidates) {

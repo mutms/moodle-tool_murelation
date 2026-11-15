@@ -30,7 +30,7 @@ use tool_mulib\muform\element\text;
 use tool_mulib\muform\form;
 use tool_mulib\muform\validator\required_if_visible;
 use tool_murelation\muform\autocomplete\team_create_userid;
-use tool_murelation\muform\autocompletemany\team_create_subuserids;
+use tool_murelation\muform\autocomplete\team_create_subuserids;
 
 /**
  * Create team.

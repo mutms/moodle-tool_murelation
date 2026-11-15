@@ -17,24 +17,26 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\autocompletemany;
+namespace tool_murelation\muform\autocomplete;
 
 use stdClass;
 use tool_murelation\local\uimode_teams;
 use tool_murelation\muform\util\autocomplete\framework_users_trait;
 
 /**
- * Members of a new team, teams UI.
+ * New members of a team, teams UI.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class team_create_subuserids extends \tool_mulib\muform\autocompletemany\base {
+final class members_create_subuserids extends \tool_mulib\muform\autocomplete\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */
     private stdClass $framework;
+    /** @var stdClass team (supervisor) record */
+    private stdClass $supervisor;
     /** @var \context context for identity fields and tenant rules */
     private \context $context;
     /** @var array candidate options, see framework_users_trait */
@@ -43,31 +45,25 @@ final class team_create_subuserids extends \tool_mulib\muform\autocompletemany\b
     /**
      * Constructor.
      *
-     * @param int $frameworkid framework id
-     * @param int $tenantid tenant id, 0 if none
+     * @param int $supervisorid team (supervisor record) id
      */
     public function __construct(
-        /** @var int framework id */
-        private readonly int $frameworkid,
-        /** @var int tenant id, 0 if none */
-        private readonly int $tenantid
+        /** @var int team (supervisor record) id */
+        private readonly int $supervisorid
     ) {
         global $DB;
-        $this->framework = $DB->get_record('tool_murelation_framework', ['id' => $frameworkid], '*', MUST_EXIST);
-        if (\tool_mulib\local\mulib::is_mutenancy_active() && $tenantid) {
-            $this->context = \context_tenant::instance($tenantid);
-        } else {
-            $this->context = \context_system::instance();
-        }
-        if (!uimode_teams::can_create_team($this->framework, $this->context)) {
-            throw new \core\exception\invalid_parameter_exception('Cannot create team');
+        $this->supervisor = $DB->get_record('tool_murelation_supervisor', ['id' => $supervisorid], '*', MUST_EXIST);
+        $this->framework = $DB->get_record('tool_murelation_framework', ['id' => $this->supervisor->frameworkid], '*', MUST_EXIST);
+        $this->context = uimode_teams::get_team_context($this->framework, $this->supervisor);
+        if (!uimode_teams::can_manage_members($this->framework, $this->supervisor)) {
+            throw new \core\exception\invalid_parameter_exception('Cannot manage team members');
         }
         $this->options = ['notsubordinate' => true];
     }
 
     #[\Override]
     public function get_args(): array {
-        return [$this->frameworkid, $this->tenantid];
+        return [$this->supervisorid];
     }
 
     #[\Override]

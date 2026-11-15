@@ -17,9 +17,9 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\phpunit\muform\autocompletemany;
+namespace tool_murelation\phpunit\muform\autocomplete;
 
-use tool_murelation\muform\autocompletemany\subordinates_create_subuserids;
+use tool_murelation\muform\autocomplete\subordinates_create_subuserids;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_murelation\muform\autocompletemany\subordinates_create_subuserids::class)]
+#[CoversClass(\tool_murelation\muform\autocomplete\subordinates_create_subuserids::class)]
 #[Group('MuTMS')]
 final class subordinates_create_subuserids_test extends \advanced_testcase {
     #[\Override]

@@ -26,7 +26,7 @@ use tool_mulib\muform\element\info;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
 use tool_mulib\muform\form;
-use tool_murelation\muform\autocompletemany\members_create_subuserids;
+use tool_murelation\muform\autocomplete\members_create_subuserids;
 
 /**
  * Add team members.

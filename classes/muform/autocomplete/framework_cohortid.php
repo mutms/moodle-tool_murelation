@@ -48,12 +48,12 @@ final class framework_cohortid extends \tool_mulib\muform\autocomplete\base {
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems): ?array {
+    public function search(string $query, int $maxitems, array $exclude): ?array {
         return $this->search_cohorts(\context_system::instance(), $query, $maxitems);
     }
 
     #[\Override]
-    public function label(string $value): ?string {
+    protected function label_value(string $value): ?string {
         return $this->cohort_labels(\context_system::instance(), [$value], [$this->currentcohortid])[$value] ?? null;
     }
 }

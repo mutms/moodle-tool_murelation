@@ -71,18 +71,18 @@ final class subordinates_create_select_supuserid extends \tool_mulib\muform\auto
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems): ?array {
+    public function search(string $query, int $maxitems, array $exclude): ?array {
         return $this->search_users($this->context, $query, $maxitems, [], $this->get_framework_where($this->framework, 'supervisor', $this->options));
     }
 
     #[\Override]
-    public function label(string $value): ?string {
+    protected function label_value(string $value): ?string {
         $where = $this->get_framework_where($this->framework, 'supervisor', $this->options);
         return $this->user_labels($this->context, [$value], $where)[$value] ?? null;
     }
 
     #[\Override]
-    public function validate(string $value): ?string {
+    protected function validate_value(string $value): ?string {
         return $this->validate_users([$value])[$value] ?? null;
     }
 }

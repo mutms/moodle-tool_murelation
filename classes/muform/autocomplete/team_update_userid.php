@@ -67,12 +67,12 @@ final class team_update_userid extends \tool_mulib\muform\autocomplete\base {
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems): ?array {
+    public function search(string $query, int $maxitems, array $exclude): ?array {
         return $this->search_users($this->context, $query, $maxitems, [], $this->get_framework_where($this->framework, 'supervisor', $this->options));
     }
 
     #[\Override]
-    public function label(string $value): ?string {
+    protected function label_value(string $value): ?string {
         $current = $this->get_current_user_label($this->context, $value, $this->options['currentuserid'] ?? null);
         if ($current !== null) {
             return $current;
@@ -82,7 +82,7 @@ final class team_update_userid extends \tool_mulib\muform\autocomplete\base {
     }
 
     #[\Override]
-    public function validate(string $value): ?string {
+    protected function validate_value(string $value): ?string {
         return $this->validate_users([$value])[$value] ?? null;
     }
 }
