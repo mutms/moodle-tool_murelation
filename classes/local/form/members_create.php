@@ -19,14 +19,14 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocompletemany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\info;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
+use tool_mulib\muform\element\userpickermany;
 use tool_mulib\muform\form;
-use tool_murelation\muform\autocomplete\members_create_subuserids;
+use tool_murelation\muform\userpicker\members_create_subuserids;
 
 /**
  * Add team members.
@@ -55,7 +55,7 @@ final class members_create extends form {
 
         $this->add(new text('teamposition', get_string('team_position', 'tool_murelation'), ['maxlength' => 254]));
 
-        $subuserids = new autocompletemany('subuserids', get_string('users'), new members_create_subuserids((int)$supervisor->id));
+        $subuserids = new userpickermany('subuserids', get_string('users'), new members_create_subuserids((int)$supervisor->id));
         $subuserids->set_required(true);
         $this->add($subuserids);
 

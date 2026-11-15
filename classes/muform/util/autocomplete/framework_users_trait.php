@@ -20,7 +20,6 @@ namespace tool_murelation\muform\util\autocomplete;
 
 use stdClass;
 use tool_mulib\local\sql;
-use tool_mulib\muform\util\autocomplete\user_trait;
 
 /**
  * Candidate supervisors and subordinates of a relation framework.
@@ -34,8 +33,6 @@ use tool_mulib\muform\util\autocomplete\user_trait;
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait framework_users_trait {
-    use user_trait;
-
     /**
      * Condition on user alias "u" for candidates of a role.
      *
@@ -72,25 +69,5 @@ trait framework_users_trait {
             $where = sql::join(' OR ', [$where->wrap('(', ')'), new sql('u.id = ?', [$options['currentuserid']])]);
         }
         return $where->wrap('(', ')');
-    }
-
-    /**
-     * Label of the current user of the edited item, tenant rules do not apply to existing values.
-     *
-     * @param \context $context
-     * @param string $value
-     * @param int|null $currentuserid
-     * @return string|null label html, null when the value is not the current user
-     */
-    protected function get_current_user_label(\context $context, string $value, ?int $currentuserid): ?string {
-        global $DB;
-        if (!$currentuserid || $value !== (string)$currentuserid) {
-            return null;
-        }
-        $user = $DB->get_record('user', ['id' => $currentuserid, 'deleted' => 0]);
-        if (!$user) {
-            return null;
-        }
-        return \tool_mulib\local\search_util::format_user_label($user, $context);
     }
 }

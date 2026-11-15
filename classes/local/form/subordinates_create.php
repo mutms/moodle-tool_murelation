@@ -19,12 +19,12 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocompletemany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\userpickermany;
 use tool_mulib\muform\form;
-use tool_murelation\muform\autocomplete\subordinates_create_subuserids;
+use tool_murelation\muform\userpicker\subordinates_create_subuserids;
 
 /**
  * Create team.
@@ -48,7 +48,7 @@ final class subordinates_create extends form {
         $this->add_user_details('supuser', self::get_title($framework->supervisortitle), (int)$supuser->id);
 
         $source = new subordinates_create_subuserids((int)$framework->id, (int)$tenantid, (int)$supuser->id);
-        $subuserids = new autocompletemany('subuserids', $subordinatestitle, $source);
+        $subuserids = new userpickermany('subuserids', $subordinatestitle, $source);
         $subuserids->set_required(true);
         $this->add($subuserids);
 

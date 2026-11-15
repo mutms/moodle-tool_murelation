@@ -19,12 +19,12 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocomplete;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\userpicker;
 use tool_mulib\muform\form;
-use tool_murelation\muform\autocomplete\supervisor_edit_userid;
+use tool_murelation\muform\userpicker\supervisor_edit_userid;
 
 /**
  * Create or update supervisor for given subordinate user.
@@ -45,7 +45,7 @@ final class supervisor_edit extends form {
         $this->add_framework_details($framework);
         $this->add_user_details('user', self::get_title($framework->subordinatetitle), (int)$subuser->id);
 
-        $userid = new autocomplete('userid', $supervisortitle, new supervisor_edit_userid((int)$framework->id, (int)$subuser->id));
+        $userid = new userpicker('userid', $supervisortitle, new supervisor_edit_userid((int)$framework->id, (int)$subuser->id));
         $userid->set_required(true);
         $this->add($userid);
 

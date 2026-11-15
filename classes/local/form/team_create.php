@@ -19,18 +19,18 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocomplete;
-use tool_mulib\muform\element\autocompletemany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\checkbox;
 use tool_mulib\muform\element\number;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
+use tool_mulib\muform\element\userpicker;
+use tool_mulib\muform\element\userpickermany;
 use tool_mulib\muform\form;
 use tool_mulib\muform\validator\required_if_visible;
-use tool_murelation\muform\autocomplete\team_create_userid;
-use tool_murelation\muform\autocomplete\team_create_subuserids;
+use tool_murelation\muform\userpicker\team_create_userid;
+use tool_murelation\muform\userpicker\team_create_subuserids;
 
 /**
  * Create team.
@@ -57,14 +57,14 @@ final class team_create extends form {
         $this->add(new text('teamidnumber', get_string('team_idnumber', 'tool_murelation'), ['type' => 'rawtext', 'maxlength' => 100]));
 
         $source = new team_create_userid((int)$framework->id, (int)$tenantid);
-        $this->add(new autocomplete('userid', self::get_title($framework->supervisortitle), $source));
+        $this->add(new userpicker('userid', self::get_title($framework->supervisortitle), $source));
 
         $this->add(new checkbox('supmanaged', get_string('team_supmanaged', 'tool_murelation')));
 
         $this->add(new number('maxsubordinates', get_string('team_maxsubordinates', 'tool_murelation'), ['min' => 0, 'width' => 'small']));
 
         $source = new team_create_subuserids((int)$framework->id, (int)$tenantid);
-        $this->add(new autocompletemany('subuserids', self::get_title($framework->subordinatestitle), $source));
+        $this->add(new userpickermany('subuserids', self::get_title($framework->subordinatestitle), $source));
 
         $hascohort = false;
         $dm = $this->get_display_manager();

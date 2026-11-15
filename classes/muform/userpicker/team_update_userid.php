@@ -17,24 +17,27 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\autocomplete;
+namespace tool_murelation\muform\userpicker;
 
 use stdClass;
+use tool_mulib\local\sql;
 use tool_murelation\local\uimode_teams;
 use tool_murelation\muform\util\autocomplete\framework_users_trait;
 
 /**
- * Supervisor of a new team, teams UI.
+ * Supervisor of an existing team, teams UI.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class team_create_userid extends \tool_mulib\muform\autocomplete\base {
+final class team_update_userid extends \tool_mulib\muform\userpicker\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */
     private stdClass $framework;
+    /** @var stdClass team (supervisor) record */
+    private stdClass $supervisor;
     /** @var \context context for identity fields and tenant rules */
     private \context $context;
     /** @var array candidate options, see framework_users_trait */
@@ -43,46 +46,44 @@ final class team_create_userid extends \tool_mulib\muform\autocomplete\base {
     /**
      * Constructor.
      *
-     * @param int $frameworkid framework id
-     * @param int $tenantid tenant id, 0 if none
+     * @param int $supervisorid team (supervisor record) id
      */
     public function __construct(
-        /** @var int framework id */
-        private readonly int $frameworkid,
-        /** @var int tenant id, 0 if none */
-        private readonly int $tenantid
+        /** @var int team (supervisor record) id */
+        private readonly int $supervisorid
     ) {
         global $DB;
-        $this->framework = $DB->get_record('tool_murelation_framework', ['id' => $frameworkid], '*', MUST_EXIST);
-        if (\tool_mulib\local\mulib::is_mutenancy_active() && $tenantid) {
-            $this->context = \context_tenant::instance($tenantid);
-        } else {
-            $this->context = \context_system::instance();
+        $this->supervisor = $DB->get_record('tool_murelation_supervisor', ['id' => $supervisorid], '*', MUST_EXIST);
+        $this->framework = $DB->get_record('tool_murelation_framework', ['id' => $this->supervisor->frameworkid], '*', MUST_EXIST);
+        $this->context = uimode_teams::get_team_context($this->framework, $this->supervisor);
+        if (!uimode_teams::can_update_team($this->framework, $this->supervisor)) {
+            throw new \core\exception\invalid_parameter_exception('Cannot update team');
         }
-        if (!uimode_teams::can_create_team($this->framework, $this->context)) {
-            throw new \core\exception\invalid_parameter_exception('Cannot create team');
-        }
-        $this->options = ['activeonly' => true];
+        $this->options = ['currentuserid' => (int)$this->supervisor->userid];
     }
 
     #[\Override]
     public function get_args(): array {
-        return [$this->frameworkid, $this->tenantid];
+        return [$this->supervisorid];
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems, array $exclude): ?array {
-        return $this->search_users($this->context, $query, $maxitems, [], $this->get_framework_where($this->framework, 'supervisor', $this->options));
+    protected function get_context(): \core\context {
+        return $this->context;
     }
 
     #[\Override]
-    protected function label_value(string $value): ?string {
-        $where = $this->get_framework_where($this->framework, 'supervisor', $this->options);
-        return $this->user_labels($this->context, [$value], $where)[$value] ?? null;
+    protected function get_candidates_sql(): ?sql {
+        return $this->get_framework_where($this->framework, 'supervisor', $this->options);
     }
 
+    /**
+     * The current supervisor stays valid whatever changed since, tenant rules do not apply.
+     *
+     * @return int[]
+     */
     #[\Override]
-    protected function validate_value(string $value): ?string {
-        return $this->validate_users([$value])[$value] ?? null;
+    protected function get_current_userids(): array {
+        return empty($this->options['currentuserid']) ? [] : [(int)$this->options['currentuserid']];
     }
 }

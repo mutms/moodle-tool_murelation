@@ -13,6 +13,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### Changed
 
+- supervisors, subordinates and team members are selected in a users picker panel with identity columns and paging instead of an autocomplete
 - migration to new forms library
 - cohort names link to cohort management, the advanced cohort management page is used when installed
 - reports have an always visible filter bar, the standard filters form is available as Advanced filtering

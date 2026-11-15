@@ -17,9 +17,10 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\autocomplete;
+namespace tool_murelation\muform\userpicker;
 
 use stdClass;
+use tool_mulib\local\sql;
 use tool_murelation\local\uimode_supervisors;
 use tool_murelation\muform\util\autocomplete\framework_users_trait;
 
@@ -30,7 +31,7 @@ use tool_murelation\muform\util\autocomplete\framework_users_trait;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class subordinates_create_select_supuserid extends \tool_mulib\muform\autocomplete\base {
+final class subordinates_create_select_supuserid extends \tool_mulib\muform\userpicker\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */
@@ -71,18 +72,12 @@ final class subordinates_create_select_supuserid extends \tool_mulib\muform\auto
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems, array $exclude): ?array {
-        return $this->search_users($this->context, $query, $maxitems, [], $this->get_framework_where($this->framework, 'supervisor', $this->options));
+    protected function get_context(): \core\context {
+        return $this->context;
     }
 
     #[\Override]
-    protected function label_value(string $value): ?string {
-        $where = $this->get_framework_where($this->framework, 'supervisor', $this->options);
-        return $this->user_labels($this->context, [$value], $where)[$value] ?? null;
-    }
-
-    #[\Override]
-    protected function validate_value(string $value): ?string {
-        return $this->validate_users([$value])[$value] ?? null;
+    protected function get_candidates_sql(): ?sql {
+        return $this->get_framework_where($this->framework, 'supervisor', $this->options);
     }
 }

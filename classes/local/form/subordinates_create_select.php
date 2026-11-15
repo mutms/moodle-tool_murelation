@@ -19,12 +19,12 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocomplete;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\userpicker;
 use tool_mulib\muform\form;
-use tool_murelation\muform\autocomplete\subordinates_create_select_supuserid;
+use tool_murelation\muform\userpicker\subordinates_create_select_supuserid;
 
 /**
  * Supervisor selection for bulk creation of subordinates.
@@ -45,7 +45,7 @@ final class subordinates_create_select extends form {
         $this->add_tenant_details($tenantid);
 
         $source = new subordinates_create_select_supuserid((int)$framework->id, (int)$tenantid);
-        $supuserid = new autocomplete('supuserid', self::get_title($framework->supervisortitle), $source);
+        $supuserid = new userpicker('supuserid', self::get_title($framework->supervisortitle), $source);
         $supuserid->set_required(true);
         $this->add($supuserid);
 

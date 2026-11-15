@@ -19,16 +19,16 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocomplete;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\checkbox;
 use tool_mulib\muform\element\number;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
+use tool_mulib\muform\element\userpicker;
 use tool_mulib\muform\form;
 use tool_mulib\muform\validator\required_if_visible;
-use tool_murelation\muform\autocomplete\team_update_userid;
+use tool_murelation\muform\userpicker\team_update_userid;
 
 /**
  * Update team.
@@ -55,7 +55,7 @@ final class team_update extends form {
         $this->add(new text('teamidnumber', get_string('team_idnumber', 'tool_murelation'), ['type' => 'rawtext', 'maxlength' => 100]));
 
         $source = new team_update_userid((int)$supervisor->id);
-        $this->add(new autocomplete('userid', self::get_title($framework->supervisortitle), $source));
+        $this->add(new userpicker('userid', self::get_title($framework->supervisortitle), $source));
 
         $this->add(new checkbox('supmanaged', get_string('team_supmanaged', 'tool_murelation')));
 

@@ -17,20 +17,21 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\autocomplete;
+namespace tool_murelation\muform\userpicker;
 
 use stdClass;
-use tool_murelation\local\uimode_supervisors;
+use tool_mulib\local\sql;
+use tool_murelation\local\uimode_teams;
 use tool_murelation\muform\util\autocomplete\framework_users_trait;
 
 /**
- * New subordinates of a supervisor, supervisors UI.
+ * Members of a new team, teams UI.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class subordinates_create_subuserids extends \tool_mulib\muform\autocomplete\base {
+final class team_create_subuserids extends \tool_mulib\muform\userpicker\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */
@@ -45,15 +46,12 @@ final class subordinates_create_subuserids extends \tool_mulib\muform\autocomple
      *
      * @param int $frameworkid framework id
      * @param int $tenantid tenant id, 0 if none
-     * @param int $supuserid supervisor user id
      */
     public function __construct(
         /** @var int framework id */
         private readonly int $frameworkid,
         /** @var int tenant id, 0 if none */
-        private readonly int $tenantid,
-        /** @var int supervisor user id */
-        private readonly int $supuserid
+        private readonly int $tenantid
     ) {
         global $DB;
         $this->framework = $DB->get_record('tool_murelation_framework', ['id' => $frameworkid], '*', MUST_EXIST);
@@ -62,30 +60,24 @@ final class subordinates_create_subuserids extends \tool_mulib\muform\autocomple
         } else {
             $this->context = \context_system::instance();
         }
-        if (!uimode_supervisors::can_bulk_create($this->framework, $this->context)) {
-            throw new \core\exception\invalid_parameter_exception('Cannot bulk create subordinates');
+        if (!uimode_teams::can_create_team($this->framework, $this->context)) {
+            throw new \core\exception\invalid_parameter_exception('Cannot create team');
         }
-        $this->options = ['notsubordinate' => true, 'notuserid' => $supuserid];
+        $this->options = ['notsubordinate' => true];
     }
 
     #[\Override]
     public function get_args(): array {
-        return [$this->frameworkid, $this->tenantid, $this->supuserid];
+        return [$this->frameworkid, $this->tenantid];
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems, array $exclude): ?array {
-        $where = $this->get_framework_where($this->framework, 'subordinate', $this->options);
-        return $this->search_users($this->context, $query, $maxitems, $exclude, $where);
+    protected function get_context(): \core\context {
+        return $this->context;
     }
 
     #[\Override]
-    public function labels(array $values): array {
-        return $this->user_labels($this->context, $values, $this->get_framework_where($this->framework, 'subordinate', $this->options));
-    }
-
-    #[\Override]
-    public function validate(array $values): array {
-        return $this->validate_users($values);
+    protected function get_candidates_sql(): ?sql {
+        return $this->get_framework_where($this->framework, 'subordinate', $this->options);
     }
 }
