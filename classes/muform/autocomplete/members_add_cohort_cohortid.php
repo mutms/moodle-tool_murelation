@@ -21,7 +21,7 @@ namespace tool_murelation\muform\autocomplete;
 
 use stdClass;
 use tool_mulib\local\search_util;
-use tool_mulib\local\context_map;
+use tool_mulib\local\cohort_util;
 use tool_mulib\local\mulib;
 use tool_mulib\local\sql;
 use tool_murelation\local\framework;
@@ -122,18 +122,10 @@ final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\
             "SELECT ch.id, ch.name
                FROM {cohort} ch
                JOIN {context} chcontext ON chcontext.id = ch.contextid
-               /* capsubquery */
-              WHERE (ch.visible = 1 OR capctx.id IS NOT NULL)
+              WHERE /* use */
                     /* idwhere */ /* searchsql */ /* tenantwhere */
            ORDER BY ch.name ASC, ch.id ASC"
-        ))->replace_comment(
-            'capsubquery',
-            context_map::get_contexts_by_capability_query(
-                'moodle/cohort:view',
-                $USER->id,
-                new sql("(ctx.contextlevel = ? OR ctx.contextlevel = ?)", [\context_system::LEVEL, \context_coursecat::LEVEL])
-            )->wrap("LEFT JOIN (", ")capctx ON capctx.id = ch.contextid")
-        );
+        ))->replace_comment('use', cohort_util::get_use_sql('ch', (int)$USER->id));
 
         if (!mulib::is_mutenancy_active()) {
             return $sql->replace_comment('tenantwhere', '');
