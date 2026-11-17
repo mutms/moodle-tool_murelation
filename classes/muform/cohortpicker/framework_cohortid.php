@@ -16,20 +16,18 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_murelation\muform\autocomplete;
+namespace tool_murelation\muform\cohortpicker;
 
-use tool_mulib\muform\util\autocomplete\cohort_trait;
+use core\context;
 
 /**
- * Supervisor or subordinate cohort of a relation framework.
+ * Management, supervisor or subordinate cohort of a relation framework.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class framework_cohortid extends \tool_mulib\muform\autocomplete\base {
-    use cohort_trait;
-
+final class framework_cohortid extends \tool_mulib\muform\cohortpicker\base {
     /**
      * Constructor.
      *
@@ -39,7 +37,7 @@ final class framework_cohortid extends \tool_mulib\muform\autocomplete\base {
         /** @var int cohort stored in the framework */
         private readonly int $currentcohortid
     ) {
-        require_capability('tool/murelation:manageframeworks', \context_system::instance());
+        require_capability('tool/murelation:manageframeworks', context\system::instance());
     }
 
     #[\Override]
@@ -48,12 +46,17 @@ final class framework_cohortid extends \tool_mulib\muform\autocomplete\base {
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems, array $exclude): ?array {
-        return $this->search_cohorts(\context_system::instance(), $query, $maxitems);
+    protected function get_context(): context {
+        return context\system::instance();
     }
 
+    /**
+     * The cohort stored in the framework stays valid.
+     *
+     * @return int[]
+     */
     #[\Override]
-    protected function label_value(string $value): ?string {
-        return $this->cohort_labels(\context_system::instance(), [$value], [$this->currentcohortid])[$value] ?? null;
+    protected function get_current_cohortids(): array {
+        return $this->currentcohortid ? [$this->currentcohortid] : [];
     }
 }

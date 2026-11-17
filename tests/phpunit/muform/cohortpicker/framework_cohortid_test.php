@@ -17,26 +17,49 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\phpunit\muform\autocomplete;
+namespace tool_murelation\phpunit\muform\cohortpicker;
 
-use tool_murelation\muform\autocomplete\framework_cohortid;
+use tool_murelation\muform\cohortpicker\framework_cohortid;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Relation framework cohort autocomplete source tests.
+ * Relation framework cohort picker source tests.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_murelation\muform\autocomplete\framework_cohortid::class)]
+#[CoversClass(\tool_murelation\muform\cohortpicker\framework_cohortid::class)]
 #[Group('MuTMS')]
 final class framework_cohortid_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
+    }
+
+    /**
+     * Cohorts offered by the source.
+     *
+     * @param \tool_mulib\muform\cohortpicker\base $source
+     * @param string $query
+     * @param string[] $exclude
+     * @return string[] cohort names indexed with cohort ids, in the order of names
+     */
+    private function search(\tool_mulib\muform\cohortpicker\base $source, string $query, array $exclude = []): array {
+        return array_column($source->search($query, $exclude)['cohorts'], 'name', 'id');
+    }
+
+    /**
+     * Values the source does not accept.
+     *
+     * @param \tool_mulib\muform\cohortpicker\base $source
+     * @param string[] $values
+     * @return string[]
+     */
+    private function refused(\tool_mulib\muform\cohortpicker\base $source, array $values): array {
+        return array_values(array_diff($values, array_map('strval', array_keys($source->labels($values)))));
     }
 
     public function test_constructor(): void {
@@ -98,21 +121,20 @@ final class framework_cohortid_test extends \advanced_testcase {
         $this->assertSame([
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('', 50, []));
+        ], $this->search($source, ''));
 
         $this->assertSame([
             (int)$cohort1->id => $cohort1->name,
-        ], $source->search('First', 50, []));
+        ], $this->search($source, 'First'));
 
         $this->assertSame([
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('koh2', 50, []));
+        ], $this->search($source, 'koh2'));
 
-        $this->assertNull($source->search('', 1, []));
         $this->assertSame([
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('', 2, []));
+        ], $this->search($source, ''));
 
         assign_capability('moodle/cohort:view', CAP_ALLOW, $roleid, $syscontext->id);
         $this->setUser($manager);
@@ -121,7 +143,7 @@ final class framework_cohortid_test extends \advanced_testcase {
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
             (int)$cohort3->id => $cohort3->name,
-        ], $source->search('', 50, []));
+        ], $this->search($source, ''));
     }
 
     public function test_label(): void {
@@ -165,7 +187,7 @@ final class framework_cohortid_test extends \advanced_testcase {
         $this->assertNull($source->labels(['abc'])['abc'] ?? null);
         $this->assertNull($source->labels([''])[''] ?? null);
         $value = (string)$cohort1->id;
-        $this->assertNull($source->validate([$value])[$value] ?? null);
+        $this->assertSame([], $this->refused($source, [$value]));
 
         // Current value is always accepted.
         $source = new framework_cohortid((int)$cohort3->id);

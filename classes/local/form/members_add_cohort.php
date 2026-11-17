@@ -19,14 +19,14 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\cohortpicker;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\info;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
 use tool_mulib\muform\form;
-use tool_murelation\muform\autocomplete\members_add_cohort_cohortid;
+use tool_murelation\muform\cohortpicker\members_add_cohort_cohortid;
 
 /**
  * Add cohort members as new team members.
@@ -55,7 +55,7 @@ final class members_add_cohort extends form {
 
         $this->add(new text('teamposition', get_string('team_position', 'tool_murelation'), ['maxlength' => 254]));
 
-        $cohortid = new autocomplete('cohortid', get_string('cohort', 'core_cohort'), new members_add_cohort_cohortid((int)$supervisor->id));
+        $cohortid = new cohortpicker('cohortid', get_string('cohort', 'core_cohort'), new members_add_cohort_cohortid((int)$supervisor->id));
         $cohortid->set_required(true);
         $this->add($cohortid);
 

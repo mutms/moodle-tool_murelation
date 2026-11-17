@@ -19,7 +19,7 @@
 
 namespace tool_murelation\local\form;
 
-use tool_mulib\muform\element\autocomplete;
+use tool_mulib\muform\element\cohortpicker;
 use tool_mulib\muform\element\autocompletemany;
 use tool_mulib\muform\element\buttons;
 use tool_mulib\muform\element\cancel;
@@ -32,7 +32,7 @@ use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
 use tool_mulib\muform\form;
 use tool_murelation\local\framework;
-use tool_murelation\muform\autocomplete\framework_cohortid;
+use tool_murelation\muform\cohortpicker\framework_cohortid;
 use tool_murelation\muform\autocomplete\framework_tenantids;
 
 /**
@@ -65,7 +65,7 @@ final class framework_create extends form {
         $this->add(new select('visibility', get_string('framework_visibility', 'tool_murelation'), array_map('strval', framework::get_visibility_options())));
 
         $source = new framework_cohortid((int)($current['managecohortid'] ?? 0));
-        $this->add(new autocomplete('managecohortid', get_string('framework_managecohort', 'tool_murelation'), $source));
+        $this->add(new cohortpicker('managecohortid', get_string('framework_managecohort', 'tool_murelation'), $source));
 
         if (\tool_mulib\local\mulib::is_mutenancy_active()) {
             $this->add(new checkbox('alltenants', get_string('framework_alltenants', 'tool_murelation')));
@@ -84,7 +84,7 @@ final class framework_create extends form {
         $this->add($supervisorstitle, 'supervisorheader');
 
         $source = new framework_cohortid((int)($current['supervisorcohortid'] ?? 0));
-        $this->add(new autocomplete('supervisorcohortid', get_string('framework_supervisorcohort', 'tool_murelation'), $source), 'supervisorheader');
+        $this->add(new cohortpicker('supervisorcohortid', get_string('framework_supervisorcohort', 'tool_murelation'), $source), 'supervisorheader');
 
         $roles = framework::get_allowed_supervisor_roles(empty($current['supervisorroleid']) ? null : (int)$current['supervisorroleid']);
         if ($roles) {
@@ -103,7 +103,7 @@ final class framework_create extends form {
         $this->add($subordinatestitle, 'subordinateheader');
 
         $source = new framework_cohortid((int)($current['subordinatecohortid'] ?? 0));
-        $this->add(new autocomplete('subordinatecohortid', get_string('framework_subordinatecohort', 'tool_murelation'), $source), 'subordinateheader');
+        $this->add(new cohortpicker('subordinatecohortid', get_string('framework_subordinatecohort', 'tool_murelation'), $source), 'subordinateheader');
 
         $this->add(new buttons('buttons'));
         $this->add(new submit('submit', get_string('framework_create', 'tool_murelation')), 'buttons');

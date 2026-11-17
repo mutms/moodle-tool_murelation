@@ -17,11 +17,10 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\autocomplete;
+namespace tool_murelation\muform\cohortpicker;
 
+use core\context;
 use stdClass;
-use tool_mulib\local\search_util;
-use tool_mulib\local\cohort_util;
 use tool_mulib\local\mulib;
 use tool_mulib\local\sql;
 use tool_murelation\local\framework;
@@ -36,13 +35,13 @@ use tool_murelation\local\uimode_teams;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\base {
+final class members_add_cohort_cohortid extends \tool_mulib\muform\cohortpicker\base {
     /** @var stdClass framework record */
     private stdClass $framework;
     /** @var stdClass team (supervisor) record */
     private stdClass $supervisor;
-    /** @var \context team context */
-    private \context $context;
+    /** @var context team context */
+    private context $context;
 
     /**
      * Constructor.
@@ -68,30 +67,19 @@ final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\
     }
 
     #[\Override]
-    public function search(string $query, int $maxitems, array $exclude): ?array {
-        global $DB;
-        $sql = $this->get_cohorts_sql()->replace_comment('searchsql', search_util::get_cohort_search_query(trim($query), 'ch')->wrap('AND ', ''));
-        $sql = $sql->replace_comment('idwhere', '');
-        $cohorts = $DB->get_records_sql_menu($sql->sql, $sql->params, 0, $maxitems + 1);
-        if (count($cohorts) > $maxitems) {
-            return null;
-        }
-        return array_map(fn($name) => format_string($name, true, ['context' => $this->context]), $cohorts);
+    protected function get_context(): context {
+        return $this->context;
     }
 
     #[\Override]
-    protected function label_value(string $value): ?string {
-        global $DB;
-        if (!preg_match('/^[1-9][0-9]*$/D', $value)) {
+    protected function get_restriction_sql(): ?sql {
+        if (!mulib::is_mutenancy_active()) {
             return null;
         }
-        $sql = $this->get_cohorts_sql()->replace_comment('searchsql', '');
-        $sql = $sql->replace_comment('idwhere', 'AND ch.id = ?', [(int)$value]);
-        $cohorts = $DB->get_records_sql_menu($sql->sql, $sql->params);
-        if (!isset($cohorts[(int)$value])) {
-            return null;
+        if ($this->supervisor->tenantid) {
+            return new sql("ctx.tenantid IS NULL OR ctx.tenantid = ?", [$this->supervisor->tenantid]);
         }
-        return format_string($cohorts[(int)$value], true, ['context' => $this->context]);
+        return new sql("ctx.tenantid IS NULL");
     }
 
     #[\Override]
@@ -108,32 +96,6 @@ final class members_add_cohort_cohortid extends \tool_mulib\muform\autocomplete\
             }
         }
         return null;
-    }
-
-    /**
-     * Visible cohorts allowed in the team tenant.
-     *
-     * @return sql with searchsql and idwhere comments
-     */
-    private function get_cohorts_sql(): sql {
-        global $USER;
-
-        $sql = (new sql(
-            "SELECT ch.id, ch.name
-               FROM {cohort} ch
-               JOIN {context} chcontext ON chcontext.id = ch.contextid
-              WHERE /* use */
-                    /* idwhere */ /* searchsql */ /* tenantwhere */
-           ORDER BY ch.name ASC, ch.id ASC"
-        ))->replace_comment('use', cohort_util::get_use_sql('ch', (int)$USER->id));
-
-        if (!mulib::is_mutenancy_active()) {
-            return $sql->replace_comment('tenantwhere', '');
-        }
-        if ($this->supervisor->tenantid) {
-            return $sql->replace_comment('tenantwhere', "AND (chcontext.tenantid IS NULL OR chcontext.tenantid = ?)", [$this->supervisor->tenantid]);
-        }
-        return $sql->replace_comment('tenantwhere', "AND chcontext.tenantid IS NULL");
     }
 
     /**

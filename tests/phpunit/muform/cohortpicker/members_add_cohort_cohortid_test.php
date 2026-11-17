@@ -17,28 +17,40 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\phpunit\muform\autocomplete;
+namespace tool_murelation\phpunit\muform\cohortpicker;
 
-use tool_murelation\muform\autocomplete\members_add_cohort_cohortid;
+use tool_murelation\muform\cohortpicker\members_add_cohort_cohortid;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Cohort with subordinate candidates for team autocomplete source tests.
+ * Cohort with subordinate candidates for team picker source tests.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_murelation\muform\autocomplete\members_add_cohort_cohortid::class)]
+#[CoversClass(\tool_murelation\muform\cohortpicker\members_add_cohort_cohortid::class)]
 #[Group('MuTMS')]
 final class members_add_cohort_cohortid_test extends \advanced_testcase {
     #[\Override]
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
+    }
+
+    /**
+     * Cohorts offered by the source.
+     *
+     * @param \tool_mulib\muform\cohortpicker\base $source
+     * @param string $query
+     * @param string[] $exclude
+     * @return string[] cohort names indexed with cohort ids, in the order of names
+     */
+    private function search(\tool_mulib\muform\cohortpicker\base $source, string $query, array $exclude = []): array {
+        return array_column($source->search($query, $exclude)['cohorts'], 'name', 'id');
     }
 
     public function test_constructor(): void {
@@ -160,12 +172,11 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
         $this->setUser($admin);
 
         $source = new members_add_cohort_cohortid((int)$supervisor1->id);
-        $this->assertSame(50, $source->get_maxitems());
         $this->assertSame([
             (int)$cohort0->id => $cohort0->name,
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort2->id => $cohort2->name,
-        ], $source->search('', 50, []));
+        ], $this->search($source, ''));
 
         $this->setUser($manager);
 
@@ -173,13 +184,11 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
         $this->assertSame([
             (int)$cohort0->id => $cohort0->name,
             (int)$cohort1->id => $cohort1->name,
-        ], $source->search('', 50, []));
+        ], $this->search($source, ''));
 
         $this->assertSame([
             (int)$cohort0->id => $cohort0->name,
-        ], $source->search($cohort0->name, 50, []));
-
-        $this->assertNull($source->search('', 1, []));
+        ], $this->search($source, $cohort0->name));
 
         if (!mulib::is_mutenancy_available()) {
             return;
@@ -203,7 +212,7 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
         $this->assertSame([
             (int)$cohort0->id => $cohort0->name,
             (int)$cohort1->id => $cohort1->name,
-        ], $source->search('', 50, []));
+        ], $this->search($source, ''));
 
         $supervisor4 = \tool_murelation\local\uimode_teams::team_create((object)[
             'frameworkid' => $framework1->id,
@@ -216,7 +225,7 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
             (int)$cohort0->id => $cohort0->name,
             (int)$cohort1->id => $cohort1->name,
             (int)$cohort3->id => $cohort3->name,
-        ], $source->search('', 50, []));
+        ], $this->search($source, ''));
     }
 
     public function test_get_candidates(): void {

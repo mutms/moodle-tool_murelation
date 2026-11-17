@@ -26,7 +26,7 @@
  */
 
 use tool_mulib\muform\handler;
-use tool_murelation\muform\autocomplete\members_add_cohort_cohortid;
+use tool_murelation\muform\cohortpicker\members_add_cohort_cohortid;
 use tool_murelation\local\framework;
 use tool_murelation\local\uimode_teams;
 
