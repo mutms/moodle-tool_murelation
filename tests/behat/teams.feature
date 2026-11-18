@@ -295,3 +295,54 @@ Feature: Teams management
       | Student 3  | student3@example.com | xyz           |
       | Student 4  | student4@example.com | xyz           |
       | Student 5  | student5@example.com | xyz           |
+
+  Scenario: Position manager may manage members of all teams via framework members page
+    Given the following "tool_murelation > frameworks" exist:
+      | name        | idnumber | uimode | supervisortitle | supervisorstitle | subordinatetitle | subordinatestitle |
+      | Framework 1 | fw1      | teams  | Ucitel          | Ucitele          | Zak              | Zaci              |
+      | Framework 2 | fw2      | teams  | Teacher         | Teachers         | Student          | Students          |
+    And the following "tool_murelation > teams" exist:
+      | framework | teamname   | teamidnumber | user     |
+      | fw1       | Team One   | tm1          | teacher1 |
+      | fw2       | Team Two   | tm2          | teacher2 |
+      | fw2       | Team Three | tm3          |          |
+    And the following "tool_murelation > team_members" exist:
+      | team      | user     |
+      | tm2       | student1 |
+      | tm2       | student2 |
+      | tm3       | student3 |
+      | tm3       | student4 |
+      | tm1       | student5 |
+    And I log in as "manager1"
+    And I am on the "Framework 2" "tool_murelation > Framework" page
+
+    When I follow "Students"
+    Then the following should exist in the "reportbuilder-table" table:
+      | First name | Teacher   | Team name  | Team ID |
+      | Student 1  | Teacher 2 | Team Two   | tm2     |
+      | Student 2  | Teacher 2 | Team Two   | tm2     |
+      | Student 3  |           | Team Three | tm3     |
+      | Student 4  |           | Team Three | tm3     |
+    And I should not see "Student 5"
+    And "Team Two" "link" should exist in the "Student 1" "table_row"
+    And "Team Two" "link" should exist in the "Student 2" "table_row"
+    And "Team Three" "link" should exist in the "Student 3" "table_row"
+    And "Team Three" "link" should exist in the "Student 4" "table_row"
+
+    When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
+    And I click on "Remove Student" "link" in the "Student 1" "table_row"
+    And I click on "Remove Student" "button" in the "dialog[open]" "css_element"
+    Then I should not see "Student 1"
+
+    When I click on "Actions" "link_or_button" in the "Student 4" "table_row"
+    And I click on "Remove Student" "link" in the "Student 4" "table_row"
+    And I click on "Remove Student" "button" in the "dialog[open]" "css_element"
+    Then I should not see "Student 4"
+    And the following should exist in the "reportbuilder-table" table:
+      | First name | Teacher   | Team name  | Team ID |
+      | Student 2  | Teacher 2 | Team Two   | tm2     |
+      | Student 3  |           | Team Three | tm3     |
+
+    When I click on "Team Three" "link" in the "Student 3" "table_row"
+    Then I should see "Team Three" in the "Team name" definition list item
+    And I should see "tm3" in the "Team ID" definition list item

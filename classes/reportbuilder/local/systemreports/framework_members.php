@@ -150,7 +150,7 @@ final class framework_members extends system_report {
                 return $value;
             }
 
-            $supervisor = $DB->get_record('tool_murelation_supervisor', ['id' => $row->id]);
+            $supervisor = $DB->get_record('tool_murelation_supervisor', ['id' => $row->supid]);
             if (!$supervisor) {
                 return $value;
             }
@@ -207,7 +207,7 @@ final class framework_members extends system_report {
                 }
 
                 if (!$supervisor || $supervisor->id != $row->supid) {
-                    $supervisor = $DB->get_record('tool_murelation_supervisor', ['id' => $row->id]);
+                    $supervisor = $DB->get_record('tool_murelation_supervisor', ['id' => $row->supid]);
                     if (!$supervisor) {
                         return false;
                     }
