@@ -6,7 +6,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## [Unreleased](https://github.com/mutms/moodle-tool_murelation/compare/v4.5.16.01...MOODLE_405_STABLE)
 
-- No changes
+### Fixed
+
+- remove action was missing or failing with an error in the list of all team members of a framework
 
 ## [v4.5.16.01](https://github.com/mutms/moodle-tool_murelation/compare/v4.5.15.01...v4.5.16.01) - 2026-11-12
 
