@@ -19,10 +19,6 @@
 /**
  * Strings for component 'tool_murelation', language 'it'.
  *
- * NOTE: This Italian translation was produced automatically by an AI language
- * model and has not yet been reviewed by a human translator. Corrections are
- * welcome.
- *
  * @package    tool_murelation
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -64,10 +60,10 @@ $string['management_framework_actions'] = 'Azioni del quadro';
 $string['management_frameworks'] = 'Quadri delle relazioni tra utenti';
 $string['management_team_actions'] = 'Azioni del team';
 $string['management_user_actions'] = 'Azioni sugli utenti correlati';
-$string['member_delete_a'] = 'Rimuovi: {$a}';
-$string['member_update_a'] = 'Modifica: {$a}';
-$string['members_add_cohort_a'] = 'Aggiungi da gruppo globale: {$a}';
-$string['members_create_a'] = 'Aggiungi: {$a}';
+$string['member_delete_a'] = 'Rimuovi {$a}';
+$string['member_update_a'] = 'Modifica {$a}';
+$string['members_add_cohort_a'] = 'Aggiungi {$a} da un gruppo globale';
+$string['members_create_a'] = 'Aggiungi {$a}';
 $string['murelation:manageframeworks'] = 'Gestire i quadri delle relazioni tra utenti';
 $string['murelation:managepositions'] = 'Gestire supervisori e team';
 $string['murelation:viewframeworks'] = 'Visualizzare i quadri delle relazioni tra utenti';
@@ -86,16 +82,16 @@ $string['settings_roles'] = 'Ruoli consentiti per i supervisori';
 $string['settings_roles_desc'] = 'Selezionare i ruoli che possono essere utilizzati nelle definizioni dei quadri come ruoli assegnati ai supervisori nei contesti utente dei subordinati.';
 $string['subordinate'] = 'Subordinato';
 $string['subordinates'] = 'Subordinati';
-$string['subordinates_create_a'] = 'Aggiungi: {$a}';
+$string['subordinates_create_a'] = 'Aggiungi {$a}';
 $string['subordinates_my'] = 'I miei subordinati';
 $string['subordinatestitle'] = 'Denominazione dei subordinati (plurale)';
 $string['subordinatetitle'] = 'Denominazione del subordinato';
 $string['supervisor'] = 'Supervisore';
-$string['supervisor_create_a'] = 'Aggiungi: {$a}';
+$string['supervisor_create_a'] = 'Aggiungi {$a}';
 $string['supervisor_delete'] = 'Rimuovi supervisore';
-$string['supervisor_delete_a'] = 'Rimuovi: {$a}';
+$string['supervisor_delete_a'] = 'Rimuovi {$a}';
 $string['supervisor_update'] = 'Modifica supervisore';
-$string['supervisor_update_a'] = 'Modifica: {$a}';
+$string['supervisor_update_a'] = 'Modifica {$a}';
 $string['supervisor_vacant'] = 'Posizione vacante';
 $string['supervisors'] = 'Supervisori';
 $string['supervisors_my'] = 'I miei supervisori';
