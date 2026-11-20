@@ -62,12 +62,6 @@ Required plugins:
 
 * [Additional tools library plugin](https://github.com/mutms/moodle-tool_mulib)
 
-## Roadmap
-
-* Approval workflows for program allocations and certification assignments
-* Additional and temporary supervisors
-* Report builder content restrictions
-
 ## Documentation
 
 See [online documentation](https://docs.mutms.org/murelation/) for more
