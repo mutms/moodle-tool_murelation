@@ -17,9 +17,9 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\phpunit\muform\userpicker;
+namespace tool_murelation\phpunit\picker\user;
 
-use tool_murelation\muform\userpicker\team_update_userid;
+use tool_murelation\picker\user\team_update_userid;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_murelation\muform\userpicker\team_update_userid::class)]
+#[CoversClass(\tool_murelation\picker\user\team_update_userid::class)]
 #[Group('MuTMS')]
 final class team_update_userid_test extends \advanced_testcase {
     #[\Override]
@@ -44,12 +44,12 @@ final class team_update_userid_test extends \advanced_testcase {
     /**
      * Users on the first page of the panel.
      *
-     * @param \tool_mulib\muform\userpicker\base $source
+     * @param \tool_mulib\picker\user\base $source
      * @param string $query
      * @param string[] $exclude
      * @return array user id => label html
      */
-    private function search(\tool_mulib\muform\userpicker\base $source, string $query, array $exclude = []): array {
+    private function search(\tool_mulib\picker\user\base $source, string $query, array $exclude = []): array {
         $result = $source->search($query, $exclude, 0);
         return array_combine(array_column($result['rows'], 'id'), array_column($result['rows'], 'label'));
     }

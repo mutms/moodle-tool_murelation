@@ -16,7 +16,7 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
-namespace tool_murelation\muform\cohortpicker;
+namespace tool_murelation\picker\cohort;
 
 use core\context;
 
@@ -27,7 +27,7 @@ use core\context;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class framework_cohortid extends \tool_mulib\muform\cohortpicker\base {
+final class framework_cohortid extends \tool_mulib\picker\cohort\base {
     /**
      * Constructor.
      *

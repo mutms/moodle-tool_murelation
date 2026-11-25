@@ -17,9 +17,9 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\phpunit\muform\cohortpicker;
+namespace tool_murelation\phpunit\picker\cohort;
 
-use tool_murelation\muform\cohortpicker\members_add_cohort_cohortid;
+use tool_murelation\picker\cohort\members_add_cohort_cohortid;
 use tool_murelation\local\framework;
 use tool_mulib\local\mulib;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[CoversClass(\tool_murelation\muform\cohortpicker\members_add_cohort_cohortid::class)]
+#[CoversClass(\tool_murelation\picker\cohort\members_add_cohort_cohortid::class)]
 #[Group('MuTMS')]
 final class members_add_cohort_cohortid_test extends \advanced_testcase {
     #[\Override]
@@ -44,12 +44,12 @@ final class members_add_cohort_cohortid_test extends \advanced_testcase {
     /**
      * Cohorts offered by the source.
      *
-     * @param \tool_mulib\muform\cohortpicker\base $source
+     * @param \tool_mulib\picker\cohort\base $source
      * @param string $query
      * @param string[] $exclude
      * @return string[] cohort names indexed with cohort ids, in the order of names
      */
-    private function search(\tool_mulib\muform\cohortpicker\base $source, string $query, array $exclude = []): array {
+    private function search(\tool_mulib\picker\cohort\base $source, string $query, array $exclude = []): array {
         return array_column($source->search($query, $exclude)['cohorts'], 'name', 'id');
     }
 

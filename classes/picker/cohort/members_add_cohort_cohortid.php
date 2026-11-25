@@ -17,7 +17,7 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\cohortpicker;
+namespace tool_murelation\picker\cohort;
 
 use core\context;
 use stdClass;
@@ -35,7 +35,7 @@ use tool_murelation\local\uimode_teams;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class members_add_cohort_cohortid extends \tool_mulib\muform\cohortpicker\base {
+final class members_add_cohort_cohortid extends \tool_mulib\picker\cohort\base {
     /** @var stdClass framework record */
     private stdClass $framework;
     /** @var stdClass team (supervisor) record */

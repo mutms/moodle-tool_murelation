@@ -17,21 +17,21 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\userpicker;
+namespace tool_murelation\picker\user;
 
 use stdClass;
 use tool_mulib\local\sql;
-use tool_murelation\local\uimode_teams;
+use tool_murelation\local\uimode_supervisors;
 use tool_murelation\muform\util\autocomplete\framework_users_trait;
 
 /**
- * Members of a new team, teams UI.
+ * Supervisor of new subordinates, supervisors UI.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class team_create_subuserids extends \tool_mulib\muform\userpicker\base {
+final class subordinates_create_select_supuserid extends \tool_mulib\picker\user\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */
@@ -60,10 +60,10 @@ final class team_create_subuserids extends \tool_mulib\muform\userpicker\base {
         } else {
             $this->context = \context_system::instance();
         }
-        if (!uimode_teams::can_create_team($this->framework, $this->context)) {
-            throw new \core\exception\invalid_parameter_exception('Cannot create team');
+        if (!uimode_supervisors::can_bulk_create($this->framework, $this->context)) {
+            throw new \core\exception\invalid_parameter_exception('Cannot bulk create subordinates');
         }
-        $this->options = ['notsubordinate' => true];
+        $this->options = [];
     }
 
     #[\Override]
@@ -78,6 +78,6 @@ final class team_create_subuserids extends \tool_mulib\muform\userpicker\base {
 
     #[\Override]
     protected function get_candidates_sql(): ?sql {
-        return $this->get_framework_where($this->framework, 'subordinate', $this->options);
+        return $this->get_framework_where($this->framework, 'supervisor', $this->options);
     }
 }

@@ -32,7 +32,7 @@ use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
 use tool_mulib\muform\form;
 use tool_murelation\local\framework;
-use tool_murelation\muform\cohortpicker\framework_cohortid;
+use tool_murelation\picker\cohort\framework_cohortid;
 use tool_murelation\muform\autocomplete\framework_tenantids;
 
 /**

@@ -24,7 +24,7 @@ use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\userpicker;
 use tool_mulib\muform\form;
-use tool_murelation\muform\userpicker\supervisor_edit_userid;
+use tool_murelation\picker\user\supervisor_edit_userid;
 
 /**
  * Create or update supervisor for given subordinate user.

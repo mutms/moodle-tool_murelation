@@ -17,21 +17,21 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\userpicker;
+namespace tool_murelation\picker\user;
 
 use stdClass;
 use tool_mulib\local\sql;
-use tool_murelation\local\uimode_teams;
+use tool_murelation\local\uimode_supervisors;
 use tool_murelation\muform\util\autocomplete\framework_users_trait;
 
 /**
- * Supervisor of a new team, teams UI.
+ * Supervisor of one subordinate, supervisors UI.
  *
  * @package     tool_murelation
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class team_create_userid extends \tool_mulib\muform\userpicker\base {
+final class supervisor_edit_userid extends \tool_mulib\picker\user\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */
@@ -45,30 +45,34 @@ final class team_create_userid extends \tool_mulib\muform\userpicker\base {
      * Constructor.
      *
      * @param int $frameworkid framework id
-     * @param int $tenantid tenant id, 0 if none
+     * @param int $subuserid subordinate user id
      */
     public function __construct(
         /** @var int framework id */
         private readonly int $frameworkid,
-        /** @var int tenant id, 0 if none */
-        private readonly int $tenantid
+        /** @var int subordinate user id */
+        private readonly int $subuserid
     ) {
         global $DB;
         $this->framework = $DB->get_record('tool_murelation_framework', ['id' => $frameworkid], '*', MUST_EXIST);
-        if (\tool_mulib\local\mulib::is_mutenancy_active() && $tenantid) {
-            $this->context = \context_tenant::instance($tenantid);
-        } else {
-            $this->context = \context_system::instance();
+        $subuser = $DB->get_record('user', ['id' => $subuserid, 'deleted' => 0, 'confirmed' => 1], '*', MUST_EXIST);
+        $this->context = \context_user::instance($subuser->id);
+        if (!uimode_supervisors::can_manage_subordinate($this->framework, $subuserid)) {
+            throw new \core\exception\invalid_parameter_exception('Cannot manage subordinate');
         }
-        if (!uimode_teams::can_create_team($this->framework, $this->context)) {
-            throw new \core\exception\invalid_parameter_exception('Cannot create team');
-        }
-        $this->options = ['activeonly' => true];
+        $currentuserid = $DB->get_field_sql(
+            "SELECT sup.userid
+               FROM {tool_murelation_subordinate} sub
+               JOIN {tool_murelation_supervisor} sup ON sup.id = sub.supervisorid
+              WHERE sub.userid = ? AND sub.frameworkid = ?",
+            [$subuserid, $frameworkid]
+        );
+        $this->options = ['notuserid' => $subuserid, 'currentuserid' => (int)$currentuserid];
     }
 
     #[\Override]
     public function get_args(): array {
-        return [$this->frameworkid, $this->tenantid];
+        return [$this->frameworkid, $this->subuserid];
     }
 
     #[\Override]
@@ -79,5 +83,15 @@ final class team_create_userid extends \tool_mulib\muform\userpicker\base {
     #[\Override]
     protected function get_candidates_sql(): ?sql {
         return $this->get_framework_where($this->framework, 'supervisor', $this->options);
+    }
+
+    /**
+     * The current supervisor stays valid whatever changed since, tenant rules do not apply.
+     *
+     * @return int[]
+     */
+    #[\Override]
+    protected function get_current_userids(): array {
+        return empty($this->options['currentuserid']) ? [] : [(int)$this->options['currentuserid']];
     }
 }

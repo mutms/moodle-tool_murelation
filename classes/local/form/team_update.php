@@ -28,7 +28,7 @@ use tool_mulib\muform\element\text;
 use tool_mulib\muform\element\userpicker;
 use tool_mulib\muform\form;
 use tool_mulib\muform\validator\required_if_visible;
-use tool_murelation\muform\userpicker\team_update_userid;
+use tool_murelation\picker\user\team_update_userid;
 
 /**
  * Update team.

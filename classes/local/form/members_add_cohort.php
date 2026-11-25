@@ -26,7 +26,7 @@ use tool_mulib\muform\element\info;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\text;
 use tool_mulib\muform\form;
-use tool_murelation\muform\cohortpicker\members_add_cohort_cohortid;
+use tool_murelation\picker\cohort\members_add_cohort_cohortid;
 
 /**
  * Add cohort members as new team members.

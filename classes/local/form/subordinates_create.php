@@ -24,7 +24,7 @@ use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\userpickermany;
 use tool_mulib\muform\form;
-use tool_murelation\muform\userpicker\subordinates_create_subuserids;
+use tool_murelation\picker\user\subordinates_create_subuserids;
 
 /**
  * Create team.

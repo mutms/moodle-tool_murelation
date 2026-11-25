@@ -17,7 +17,7 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace tool_murelation\muform\userpicker;
+namespace tool_murelation\picker\user;
 
 use stdClass;
 use tool_mulib\local\sql;
@@ -31,7 +31,7 @@ use tool_murelation\muform\util\autocomplete\framework_users_trait;
  * @copyright   2026 Petr Skoda
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class subordinates_create_subuserids extends \tool_mulib\muform\userpicker\base {
+final class subordinates_create_subuserids extends \tool_mulib\picker\user\base {
     use framework_users_trait;
 
     /** @var stdClass framework record */

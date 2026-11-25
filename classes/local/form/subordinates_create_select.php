@@ -24,7 +24,7 @@ use tool_mulib\muform\element\cancel;
 use tool_mulib\muform\element\submit;
 use tool_mulib\muform\element\userpicker;
 use tool_mulib\muform\form;
-use tool_murelation\muform\userpicker\subordinates_create_select_supuserid;
+use tool_murelation\picker\user\subordinates_create_select_supuserid;
 
 /**
  * Supervisor selection for bulk creation of subordinates.
