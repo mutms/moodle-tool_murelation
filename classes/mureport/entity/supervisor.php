@@ -87,7 +87,7 @@ class supervisor extends entity {
             )
                 ->add_field('vacant', "CASE WHEN $alias.userid IS NULL THEN 1 ELSE 0 END")
                 ->set_sortable(true),
-            'tenant' => $this->create_column('tenant', new lang_string('tenant', 'tool_mutenancy'), column::TYPE_TEXT)
+            'tenant' => $this->create_column('tenant', new lang_string('tenant', 'tool_murelation'), column::TYPE_TEXT)
                 ->add_field('tenant', "(SELECT t.name FROM {tool_mutenancy_tenant} t WHERE t.id = $alias.tenantid)")
                 ->set_sortable(true)
                 ->set_available(fn(): bool => mulib::is_mutenancy_active()),
@@ -127,7 +127,7 @@ class supervisor extends entity {
                 new lang_string('supervisor_vacant', 'tool_murelation'),
                 "CASE WHEN $alias.userid IS NULL THEN 1 ELSE 0 END"
             ),
-            'tenant' => (new filter\picker($alias, 'tenant', new lang_string('tenant', 'tool_mutenancy'), "$alias.tenantid"))
+            'tenant' => (new filter\picker($alias, 'tenant', new lang_string('tenant', 'tool_murelation'), "$alias.tenantid"))
                 ->set_integer_values()
                 ->set_labels(fn(array $values): array => self::get_tenant_labels($values))
                 ->set_available(fn(): bool => mulib::is_mutenancy_active()),

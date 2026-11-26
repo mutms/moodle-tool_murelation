@@ -120,6 +120,7 @@ $string['teammembers'] = 'Miembros del equipo';
 $string['teams'] = 'Equipos';
 $string['teams_supervised'] = 'Equipos supervisados';
 $string['teamsearch'] = 'Buscar equipos';
+$string['tenant'] = 'Inquilino';
 $string['user_subordinates_add'] = 'Añadir subordinados';
 $string['user_supervisor_appoint'] = 'Nombrar supervisor';
 $string['user_supervisor_new'] = 'Crear nuevo supervisor/equipo';

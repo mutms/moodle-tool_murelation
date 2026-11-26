@@ -120,6 +120,7 @@ $string['teammembers'] = 'Teammitglieder';
 $string['teams'] = 'Teams';
 $string['teams_supervised'] = 'Geleitete Teams';
 $string['teamsearch'] = 'Teams suchen';
+$string['tenant'] = 'Mandant';
 $string['user_subordinates_add'] = 'Mitarbeiter/innen hinzufügen';
 $string['user_supervisor_appoint'] = 'Vorgesetzte/n ernennen';
 $string['user_supervisor_new'] = 'Neue/n Vorgesetzte/n bzw. neues Team anlegen';

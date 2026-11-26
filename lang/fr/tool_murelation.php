@@ -120,6 +120,7 @@ $string['teammembers'] = 'Membres de l’équipe';
 $string['teams'] = 'Équipes';
 $string['teams_supervised'] = 'Équipes encadrées';
 $string['teamsearch'] = 'Rechercher des équipes';
+$string['tenant'] = 'Locataire';
 $string['user_subordinates_add'] = 'Ajouter des subordonnés';
 $string['user_supervisor_appoint'] = 'Nommer un supérieur';
 $string['user_supervisor_new'] = 'Créer un nouveau supérieur ou une nouvelle équipe';

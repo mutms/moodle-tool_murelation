@@ -116,6 +116,7 @@ $string['teammembers'] = 'Členové týmu';
 $string['teams'] = 'Týmy';
 $string['teams_supervised'] = 'Vedené týmy';
 $string['teamsearch'] = 'Hledat týmy';
+$string['tenant'] = 'Klient';
 $string['user_subordinates_add'] = 'Přidat podřízené';
 $string['user_supervisor_appoint'] = 'Jmenovat nadřízeného';
 $string['user_supervisor_new'] = 'Vytvořit nového nadřízeného/tým';

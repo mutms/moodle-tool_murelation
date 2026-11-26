@@ -116,6 +116,7 @@ $string['teammembers'] = 'Team members';
 $string['teams'] = 'Teams';
 $string['teams_supervised'] = 'Supervised teams';
 $string['teamsearch'] = 'Search teams';
+$string['tenant'] = 'Tenant';
 $string['user_subordinates_add'] = 'Add subordinates';
 $string['user_supervisor_appoint'] = 'Appoint supervisor';
 $string['user_supervisor_new'] = 'Create new supervisor/team';
