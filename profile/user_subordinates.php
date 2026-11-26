@@ -72,6 +72,10 @@ $pageurl = new \moodle_url('/admin/tool/murelation/profile/user_subordinates.php
 
 $PAGE->set_url($pageurl);
 $PAGE->set_context($usercontext);
+
+$report = \tool_murelation\mureport\system_report\user_subordinates::make_instance((int)$user->id);
+$report->require_access();
+$report->init_page($pageurl);
 $PAGE->navigation->extend_for_user($user);
 $PAGE->set_pagelayout('report');
 
@@ -89,14 +93,6 @@ if ($user->id == $USER->id) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle, 2, 'h3');
 
-$report = \core_reportbuilder\system_report_factory::create(
-    \tool_murelation\reportbuilder\local\systemreports\user_subordinates::class,
-    $usercontext
-);
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
-    'framework:name' => null,
-]));
-echo $report->output();
-echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
+echo $OUTPUT->render(new \tool_mureport\output\report_full($report));
 
 echo $OUTPUT->footer();

@@ -51,7 +51,7 @@ Feature: Behat tool_murelation generator usage
       | Framework 4 | fw4      | teams       | Some framework 4 desc | everybody  | CH1          | Velitel         | Velitele         | CH2              | tmanager       | Pesak            | Pesaci            | CH3               |
     And I log in as "admin"
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
-    Then the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the mureport:
       | Framework name | Framework ID | Framework mode   | Supervisor title  | Supervisor role | Subordinate title |
       | Framework 1    |              | Supervisors      | Supervisor        |                 | Subordinate       |
       | Framework 2    |              | Teams            | Supervisor        |                 | Subordinate       |
@@ -132,8 +132,8 @@ Feature: Behat tool_murelation generator usage
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     And I follow "Framework 1"
     And I follow "Potomci"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Rodic    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Rodic    |
       | Student 1  | student1@example.com | Parent 1 |
       | Student 2  | student2@example.com | Parent 1 |
       | Student 3  | student3@example.com | Parent 2 |
@@ -153,7 +153,7 @@ Feature: Behat tool_murelation generator usage
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     And I follow "Framework 1"
     And I follow "Teams"
-    Then the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the mureport:
       | Team name | Team ID | Manazer   | Supervisor-managed team | Podrizeni |
       | Prvni tym | tm1     | Manager 1 | No                      | 0         |
       | Druhy tym |         |           | No                      | 0         |
@@ -179,8 +179,8 @@ Feature: Behat tool_murelation generator usage
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     And I follow "Framework 1"
     And I follow "Podrizeni"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position | Manazer   | Team name | Team ID |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Team position | Manazer   | Team name | Team ID |
       | Manager 1  | manager1@example.com | Velitel       | Manager 1 | Prvni tym | tm1     |
       | Student 1  | student1@example.com |               | Manager 1 | Prvni tym | tm1     |
       | Student 2  | student2@example.com |               | Manager 1 | Prvni tym | tm1     |
@@ -205,7 +205,7 @@ Feature: Behat tool_murelation generator usage
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
     And I follow "Framework 1"
     And I follow "Teams"
-    Then the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the mureport:
       | Team name | Team ID | Manazer | Supervisor-managed team | Tenant   | Podrizeni |
       | Prvni tym |         |         | No                      | Tenant 1 | 0         |
       | Druhy tym |         |         | No                      | Tenant 2 | 0         |

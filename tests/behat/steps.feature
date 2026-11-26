@@ -8,7 +8,7 @@ Feature: tool_murelation behat steps
       | Framework 2 | fw2      | teams       |
     And I log in as "admin"
     When I am on the "tool_murelation > User relation frameworks" page
-    Then the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the mureport:
       | Framework name | Framework ID | Framework mode   |
       | Framework 1    | fw1          | Supervisors      |
       | Framework 2    | fw2          | Teams            |

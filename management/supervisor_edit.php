@@ -93,7 +93,7 @@ if ($data = $form->get_data()) {
     $data->frameworkid = $framework->id;
     $data->subuserid = $subuser->id;
     uimode_supervisors::supervisor_edit($data);
-    $handler->submitted($returnurl);
+    $handler->submitted($returnurl, ['changed' => 'rows']);
 }
 
 $handler->render($form);

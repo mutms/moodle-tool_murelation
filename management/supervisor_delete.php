@@ -84,7 +84,7 @@ if ($form->is_cancelled()) {
     $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
     \tool_murelation\local\supervisor::delete($supervisor->id);
-    $handler->submitted($returnurl);
+    $handler->submitted($returnurl, ['changed' => 'rows']);
 }
 
 $handler->render($form);

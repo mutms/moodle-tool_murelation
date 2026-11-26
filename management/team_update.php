@@ -78,7 +78,7 @@ if ($form->is_cancelled()) {
 } else if ($data = $form->get_data()) {
     $data->id = $supervisor->id;
     $supervisor = uimode_teams::team_update($data);
-    $handler->submitted($returnurl);
+    $handler->submitted($returnurl, ['changed' => 'rows']);
 }
 
 $handler->render($form);

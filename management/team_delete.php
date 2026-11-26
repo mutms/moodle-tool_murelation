@@ -72,7 +72,7 @@ if ($form->is_cancelled()) {
 } else if ($data = $form->get_data()) {
     uimode_teams::team_delete($supervisor->id);
     $returnurl = new moodle_url('/admin/tool/murelation/management/framework_teams.php', ['id' => $supervisor->frameworkid]);
-    $handler->submitted($returnurl);
+    $handler->submitted($returnurl, ['changed' => 'rows']);
 }
 
 $handler->render($form);

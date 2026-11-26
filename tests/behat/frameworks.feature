@@ -221,7 +221,7 @@ Feature: Site managers can manage frameworks for user relations
     And I follow "Framework 2"
     When I click on "Delete framework" action from "Framework actions" dropdown
     And I click on "Delete framework" "button" in the "dialog[open]" "css_element"
-    Then I should see "No user relation frameworks found"
+    Then I should see "Nothing to display"
 
   Scenario: Framework viewer may see all user relation frameworks
     Given the following "tool_murelation > frameworks" exist:
@@ -232,7 +232,7 @@ Feature: Site managers can manage frameworks for user relations
 
     And I navigate to "Users > Supervisors and teams > User relation frameworks" in site administration
 
-    Then the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the mureport:
       | Framework name | Framework ID | Framework mode   | Supervisor title  | Supervisor role | Subordinate title |
       | Framework 1    | fw1          | Supervisors      | Ucitel            | UManager        | Zak               |
       | Framework 2    | fw2          | Teams            | Velitel           | TManager        | Pesak             |

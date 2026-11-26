@@ -54,6 +54,10 @@ require_capability('tool/murelation:viewpositions', $context);
 $PAGE->set_context($context);
 $PAGE->set_url($curretnurl);
 
+$report = \tool_murelation\mureport\system_report\team_members::make_instance((int)$supervisor->id);
+$report->require_access();
+$report->init_page($curretnurl);
+
 $teamname = format_string($supervisor->teamname);
 
 $PAGE->set_secondary_navigation(false);
@@ -126,16 +130,6 @@ echo $managementoutput->render_team($framework, $supervisor);
 
 echo $OUTPUT->heading(format_string($framework->subordinatestitle), 2, 'h3');
 
-$report = \core_reportbuilder\system_report_factory::create(
-    \tool_murelation\reportbuilder\local\systemreports\team_members::class,
-    $context,
-    parameters:['supervisorid' => $supervisor->id]
-);
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
-    'user:fullname' => null,
-    'subordinate:teamposition' => null,
-]));
-echo $report->output();
-echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
+echo $OUTPUT->render(new \tool_mureport\output\report_full($report));
 
 echo $OUTPUT->footer();

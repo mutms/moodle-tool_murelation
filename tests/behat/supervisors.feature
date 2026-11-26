@@ -79,26 +79,24 @@ Feature: Supervisors management
     And I set the following muform fields in the "dialog[open]" "css_element":
       | subuserids | Student 1, Student 2 |
     And I click on "Add Zaci" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Ucitel    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Ucitel    |
       | Student 1  | student1@example.com | Manager 1 |
       | Student 2  | student2@example.com | Manager 1 |
 
-    When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
-    And I click on "Update Ucitel" "link" in the "Student 1" "table_row"
+    When I click on "Update Ucitel" action in the "Student 1" mureport row
     And I set the following muform fields in the "dialog[open]" "css_element":
       | userid | Manager 2 |
     And I click on "Update Ucitel" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Ucitel    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Ucitel    |
       | Student 1  | student1@example.com | Manager 2 |
       | Student 2  | student2@example.com | Manager 1 |
 
-    When I click on "Actions" "link_or_button" in the "Student 2" "table_row"
-    And I click on "Remove Ucitel" "link" in the "Student 2" "table_row"
+    When I click on "Remove Ucitel" action in the "Student 2" mureport row
     And I click on "Remove Ucitel" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Ucitel    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Ucitel    |
       | Student 1  | student1@example.com | Manager 2 |
     And I should not see "Student 2"
 
@@ -112,26 +110,24 @@ Feature: Supervisors management
     And I set the following muform fields in the "dialog[open]" "css_element":
       | subuserids | Student 1, Student 2 |
     And I click on "Add Children" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Parent    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Parent    |
       | Student 1  | student1@example.com | Parent 1  |
       | Student 2  | student2@example.com | Parent 1  |
 
-    When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
-    And I click on "Update Parent" "link" in the "Student 1" "table_row"
+    When I click on "Update Parent" action in the "Student 1" mureport row
     And I set the following muform fields in the "dialog[open]" "css_element":
       | userid | Parent 2 |
     And I click on "Update Parent" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Parent    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Parent    |
       | Student 1  | student1@example.com | Parent 2  |
       | Student 2  | student2@example.com | Parent 1  |
 
-    When I click on "Actions" "link_or_button" in the "Student 2" "table_row"
-    And I click on "Remove Parent" "link" in the "Student 2" "table_row"
+    When I click on "Remove Parent" action in the "Student 2" mureport row
     And I click on "Remove Parent" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Parent    |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Parent    |
       | Student 1  | student1@example.com | Parent 2  |
     And I should not see "Student 2"
 

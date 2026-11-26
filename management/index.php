@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
+// phpcs:disable moodle.Files.RequireLogin.Missing
 // phpcs:disable moodle.Files.LineLength.TooLong
 
 /**
@@ -34,12 +35,13 @@ require_once('../../../../config.php');
 
 $syscontext = context_system::instance();
 
-require_login();
-require_capability('tool/murelation:viewframeworks', $syscontext);
+$report = \tool_murelation\mureport\system_report\frameworks::make_instance();
+$report->require_access();
 
 $pageurl = new moodle_url('/admin/tool/murelation/management/index.php');
 
 \tool_murelation\local\management::setup_index_page($pageurl);
+$report->init_page($pageurl);
 
 $buttons = [];
 
@@ -61,15 +63,6 @@ if ($buttons) {
 
 echo $OUTPUT->header();
 
-$report = \core_reportbuilder\system_report_factory::create(
-    \tool_murelation\reportbuilder\local\systemreports\frameworks::class,
-    $syscontext
-);
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
-    'framework:name' => null,
-    'framework:uimode' => null,
-]));
-echo $report->output();
-echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
+echo $OUTPUT->render(new \tool_mureport\output\report_full($report));
 
 echo $OUTPUT->footer();

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
+// phpcs:disable moodle.Files.RequireLogin.Missing
 // phpcs:disable moodle.Files.LineLength.TooLong
 
 /**
@@ -41,18 +42,19 @@ $id = required_param('id', PARAM_INT);
 
 $syscontext = context_system::instance();
 
-require_login();
-require_capability('tool/murelation:viewpositions', $syscontext);
-
 $framework = $DB->get_record('tool_murelation_framework', ['id' => $id], '*', MUST_EXIST);
 
 if ($framework->uimode != framework::UIMODE_SUPERVISORS) {
     redirect(new moodle_url('/admin/tool/murelation/management/framework.php', ['id' => $framework->id]));
 }
 
+$report = \tool_murelation\mureport\system_report\framework_subordinates::make_instance((int)$framework->id);
+$report->require_access();
+
 $pageurl = new moodle_url('/admin/tool/murelation/management/framework_subordinates.php', ['id' => $framework->id]);
 
 \tool_murelation\local\management::setup_framework_page($pageurl, $framework, 'framework_subordinates');
+$report->init_page($pageurl);
 $title = format_string($framework->subordinatestitle);
 $PAGE->navbar->add($title);
 
@@ -71,16 +73,6 @@ if ($actions->has_items()) {
 
 echo $OUTPUT->header();
 
-$report = \core_reportbuilder\system_report_factory::create(
-    \tool_murelation\reportbuilder\local\systemreports\framework_subordinates::class,
-    $syscontext,
-    parameters:['frameworkid' => $framework->id]
-);
-echo $OUTPUT->render(new \tool_mulib\output\report_filter_bar($report, pinned: [
-    'user:fullname' => null,
-    'supuser:fullname' => null,
-]));
-echo $report->output();
-echo $OUTPUT->render(new \tool_mulib\output\report_pager($report));
+echo $OUTPUT->render(new \tool_mureport\output\report_full($report));
 
 echo $OUTPUT->footer();

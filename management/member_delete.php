@@ -71,7 +71,7 @@ if ($form->is_cancelled()) {
     $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
     uimode_teams::member_delete($subordinate->id);
-    $handler->submitted($returnurl);
+    $handler->submitted($returnurl, ['changed' => 'rows']);
 }
 
 $handler->render($form);

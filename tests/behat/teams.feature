@@ -97,8 +97,8 @@ Feature: Teams management
     And I should see "Yes" in the "Supervisor-managed team" definition list item
     And I should see "2 / 10" in the "Max team members" definition list item
     And I should see "Team cohort 2" in the "Team cohort" definition list item
-    And the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position |
+    And the following should exist in the mureport:
+      | Full name  | Email address        | Team position |
       | Student 1  | student1@example.com |               |
       | Student 2  | student2@example.com |               |
 
@@ -130,8 +130,8 @@ Feature: Teams management
       | subuserids | Student 3 |
     And I click on "Add Students" "button" in the "dialog[open]" "css_element"
     Then I should see "3 / 11" in the "Max team members" definition list item
-    And the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position |
+    And the following should exist in the mureport:
+      | Full name  | Email address        | Team position |
       | Student 1  | student1@example.com |               |
       | Student 2  | student2@example.com |               |
       | Student 3  | student3@example.com |               |
@@ -142,32 +142,30 @@ Feature: Teams management
       | subuserids   | Student 4, Student 5 |
     And I click on "Add Students" "button" in the "dialog[open]" "css_element"
     Then I should see "5 / 11" in the "Max team members" definition list item
-    And the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position |
+    And the following should exist in the mureport:
+      | Full name  | Email address        | Team position |
       | Student 1  | student1@example.com |               |
       | Student 2  | student2@example.com |               |
       | Student 3  | student3@example.com |               |
       | Student 4  | student4@example.com | helper        |
       | Student 5  | student5@example.com | helper        |
 
-    When I click on "Actions" "link_or_button" in the "Student 4" "table_row"
-    And I click on "Update Student" "link" in the "Student 4" "table_row"
+    When I click on "Update Student" action in the "Student 4" mureport row
     And I set the following muform fields in the "dialog[open]" "css_element":
       | teamposition | leader |
     And I click on "Update Student" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Team position |
       | Student 1  | student1@example.com |               |
       | Student 2  | student2@example.com |               |
       | Student 3  | student3@example.com |               |
       | Student 4  | student4@example.com | leader        |
       | Student 5  | student5@example.com | helper        |
 
-    When I click on "Actions" "link_or_button" in the "Student 5" "table_row"
-    And I click on "Remove Student" "link" in the "Student 5" "table_row"
+    When I click on "Remove Student" action in the "Student 5" mureport row
     And I click on "Remove Student" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Team position |
       | Student 1  | student1@example.com |               |
       | Student 2  | student2@example.com |               |
       | Student 3  | student3@example.com |               |
@@ -179,7 +177,7 @@ Feature: Teams management
     And I set the following muform fields in the "dialog[open]" "css_element":
       | confirm | 1 |
     And I click on "Delete team" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the mureport:
       | Team name | Team ID | Supervisor-managed team |
       | Team One  |         | No                      |
     And I should not see "Team B"
@@ -211,8 +209,8 @@ Feature: Teams management
 
     When I am on the "manager2" "user > profile" page logged in as "manager1"
     And I follow "Supervised teams"
-    Then the following should exist in the "reportbuilder-table" table:
-      | Relation framework | Team name | Team ID | Supervisor title | Supervisor-managed team | Subordinates |
+    Then the following should exist in the mureport:
+      | Framework name     | Team name | Team ID | Supervisor title | Supervisor-managed team | Subordinates |
       | Framework 1        | Team One  | tm1     | Ucitel           | No                      | 2            |
 
   Scenario: Team supervisor may manage own team
@@ -234,8 +232,8 @@ Feature: Teams management
     And I set the following muform fields in the "dialog[open]" "css_element":
       | subuserids | Student 1, Student 2 |
     And I click on "Add Zaci" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Team position |
       | Student 1  |               |
       | Student 2  |               |
 
@@ -244,28 +242,26 @@ Feature: Teams management
       | subuserids   | Student 3 |
       | teamposition | leader    |
     And I click on "Add Zaci" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Team position |
       | Student 1  |               |
       | Student 2  |               |
       | Student 3  | leader        |
 
-    When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
-    And I click on "Update Zak" "link" in the "Student 1" "table_row"
+    When I click on "Update Zak" action in the "Student 1" mureport row
     And I set the following muform fields in the "dialog[open]" "css_element":
       | teamposition | subleader |
     And I click on "Update Zak" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Team position |
       | Student 1  | subleader     |
       | Student 2  |               |
       | Student 3  | leader        |
 
-    When I click on "Actions" "link_or_button" in the "Student 3" "table_row"
-    And I click on "Remove Zak" "link" in the "Student 3" "table_row"
+    When I click on "Remove Zak" action in the "Student 3" mureport row
     And I click on "Remove Zak" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Team position |
       | Student 1  | subleader     |
       | Student 2  |               |
     And I should not see "Student 3"
@@ -288,8 +284,8 @@ Feature: Teams management
       | teamposition | xyz      |
       | cohortid     | Cohort 3 |
     And I click on "Add Zaci from cohort" "button" in the "dialog[open]" "css_element"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Email address        | Team position |
+    Then the following should exist in the mureport:
+      | Full name  | Email address        | Team position |
       | Student 1  | student1@example.com | xyz           |
       | Student 2  | student2@example.com | xyz           |
       | Student 3  | student3@example.com | xyz           |
@@ -317,8 +313,8 @@ Feature: Teams management
     And I am on the "Framework 2" "tool_murelation > Framework" page
 
     When I follow "Students"
-    Then the following should exist in the "reportbuilder-table" table:
-      | First name | Teacher   | Team name  | Team ID |
+    Then the following should exist in the mureport:
+      | Full name  | Teacher   | Team name  | Team ID |
       | Student 1  | Teacher 2 | Team Two   | tm2     |
       | Student 2  | Teacher 2 | Team Two   | tm2     |
       | Student 3  |           | Team Three | tm3     |
@@ -329,17 +325,15 @@ Feature: Teams management
     And "Team Three" "link" should exist in the "Student 3" "table_row"
     And "Team Three" "link" should exist in the "Student 4" "table_row"
 
-    When I click on "Actions" "link_or_button" in the "Student 1" "table_row"
-    And I click on "Remove Student" "link" in the "Student 1" "table_row"
+    When I click on "Remove Student" action in the "Student 1" mureport row
     And I click on "Remove Student" "button" in the "dialog[open]" "css_element"
     Then I should not see "Student 1"
 
-    When I click on "Actions" "link_or_button" in the "Student 4" "table_row"
-    And I click on "Remove Student" "link" in the "Student 4" "table_row"
+    When I click on "Remove Student" action in the "Student 4" mureport row
     And I click on "Remove Student" "button" in the "dialog[open]" "css_element"
     Then I should not see "Student 4"
-    And the following should exist in the "reportbuilder-table" table:
-      | First name | Teacher   | Team name  | Team ID |
+    And the following should exist in the mureport:
+      | Full name  | Teacher   | Team name  | Team ID |
       | Student 2  | Teacher 2 | Team Two   | tm2     |
       | Student 3  |           | Team Three | tm3     |
 
