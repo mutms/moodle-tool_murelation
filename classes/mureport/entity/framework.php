@@ -49,13 +49,17 @@ class framework extends entity {
 
     #[\Override]
     public function get_column_names(): array {
-        return ['name', 'idnumber', 'uimode', 'visibility', 'supervisortitle', 'subordinatetitle', 'supervisorrole', 'timecreated'];
+        return [
+            'name', 'idnumber', 'id', 'uimode', 'visibility', 'supervisortitle', 'subordinatetitle', 'supervisorrole',
+            'timecreated',
+        ];
     }
 
     #[\Override]
     protected function define_columns(string $selector): array {
         $alias = $this->alias;
         $column = match ($selector) {
+            'id' => $this->create_id_column(),
             'name' => $this->define_name_column(),
             'idnumber' => $this->create_column(
                 'idnumber',
@@ -96,13 +100,14 @@ class framework extends entity {
 
     #[\Override]
     public function get_filter_names(): array {
-        return ['name', 'idnumber', 'uimode', 'visibility'];
+        return ['name', 'idnumber', 'id', 'uimode', 'visibility'];
     }
 
     #[\Override]
     protected function define_filters(string $selector): array {
         $alias = $this->alias;
         $filter = match ($selector) {
+            'id' => $this->create_id_filter(),
             'name' => new filter\text($alias, 'name', new lang_string('framework_name', 'tool_murelation'), "$alias.name"),
             'idnumber' => new filter\text(
                 $alias,
